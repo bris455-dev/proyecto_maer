@@ -1,0 +1,140 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden; 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Contenedor principal */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Ocupa el 100% de la pantalla */
+  background: linear-gradient(135deg, #e0e0e0 25%, transparent 25%) -50px 0,
+              linear-gradient(225deg, #e0e0e0 25%, transparent 25%) -50px 0,
+              linear-gradient(315deg, #e0e0e0 25%, transparent 25%),
+              linear-gradient(45deg, #e0e0e0 25%, transparent 25%);
+  background-size: 100px 100px;
+  background-color: #fafafa;
+  animation: gradientAnimation 15s ease infinite;
+}
+
+
+
+
+/* Efectos abstractos difuminados */
+.login-container::before,
+.login-container::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.5;
+}
+
+.login-container::before {
+  width: 350px;
+  height: 350px;
+  background: #26aac8;
+  top: -120px;
+  left: -120px;
+}
+
+.login-container::after {
+  width: 450px;
+  height: 450px;
+  background: #516ea0;
+  bottom: -150px;
+  right: -100px;
+}
+
+/* Tarjeta de login */
+.login-card {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px 30px;
+  border-radius: 16px;
+  width: 350px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+
+.login-card .logo {
+  width: 320px;
+  margin-bottom: 15px;
+}
+
+.login-card h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Inputs y botón del mismo tamaño */
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+}
+
+.form-group input,
+.btn-login {
+  display: block;
+  width: 100%;
+  box-sizing: border-box; /* <- asegura que el padding y border no aumenten el tamaño */
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.form-group input:focus {
+  border-color: #25acb0;
+  box-shadow: 0 0 8px rgba(15, 161, 149, 0.3);
+}
+
+/* Botón */
+.btn-login {
+  background: #2898b7;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.btn-login:hover {
+  background: #2f9dc5;
+}
+
+/* Texto adicional */
+.extra-text {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #555;
+}
+
+.extra-text a {
+  color: #e9150e;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.extra-text a:hover {
+  text-decoration: underline;
+}

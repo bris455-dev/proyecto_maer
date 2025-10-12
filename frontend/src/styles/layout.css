@@ -1,0 +1,117 @@
+.layout-container {
+  display: flex;
+  height: 100vh;
+  background-color: #f8f9fa;
+  position: relative;
+  transition: all 0.3s ease;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Botón hamburguesa */
+.toggle-btn{
+  position: absolute;
+  top: 20px;
+  left: 10px;
+  background: #117b9b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  z-index: 1001;
+  transition: background 0.3s;
+}
+
+.toggle-btn:hover {
+  background: #2091c6;
+}
+
+/* Menú lateral */
+.menu-lateral {
+  width: 220px;
+  background-color: #13768f;
+  color: white;
+  padding: 60px 20px 20px;
+  transition: width 0.3s ease, transform 0.3s ease;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.menu-lateral.cerrado {
+  width: 0;
+  padding: 60px 0;
+  transform: translateX(-100%);
+}
+
+.menu-lateral h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.menu-lateral ul {
+  list-style: none;
+  padding: 0;
+}
+
+.menu-lateral li {
+  padding: 10px;
+  margin: 5px 0;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+
+.menu-lateral li:hover {
+  background-color: #10b6bf;
+}
+
+.menu-colapsado .menu-lateral{
+  margin-left: 0;
+}
+
+.contenido-principal {
+  flex: 1;
+  padding: 20px;
+  text-align: center;
+  margin-left: 0px;
+  transition: margin-left 0.3s ease;
+}
+
+/* 🔒 Botón de cerrar sesión */
+.logout-btn {
+  background-color: #606464;
+  font-size: 18px;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  width: calc(14.2% - 10px);
+  transition: background-color 0.3s ease;
+  position: absolute;
+  bottom: 40px;
+  right: 2;
+}
+
+.logout-btn:hover {
+  background-color: #817f7f;
+}
+
+.submenu {
+  margin-left: 15px;
+  list-style: none;
+  padding: 0;
+}
+
+.submenu li {
+  padding: 6px 0 6px 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #e2e8f0;
+}
+
+.submenu li:hover {
+  text-decoration: underline;
+}
