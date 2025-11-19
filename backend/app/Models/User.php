@@ -4,23 +4,25 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, Notifiable;
 
     protected $table = 'usuarios';
-    protected $primaryKey = 'id';
 
     protected $fillable = [
         'nombre',
         'email',
         'password',
+        'empleadoID',
+        'clienteID',
+        'rolID', // 🔹 enlazamos directamente con Rol
+        'estado',
         'mfa_code',
         'mfa_expires_at',
         'password_changed',
-        'rol',
         'failed_attempts',
         'is_locked',
         'lock_expires_at',
@@ -36,7 +38,15 @@ class User extends Authenticatable
         'password_reset_token',
     ];
 
-    public $timestamps = false; // tienes created_at
+    protected $casts = [
+        'mfa_expires_at' => 'datetime',
+        'password_reset_expires_at' => 'datetime',
+        'email_verified_at' => 'datetime',
+    ];
+
+    // 🔹 Relación con rol
+    public function rol()
+    {
+        return $this->belongsTo(Rol::class, 'rolID', 'rolID');
+    }
 }
-
-

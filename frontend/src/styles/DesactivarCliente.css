@@ -1,0 +1,45 @@
+.desactivar-cliente-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+}
+
+.btn-estado {
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-estado.desactivar {
+  background-color: #c0392b;
+}
+
+.btn-estado.activar {
+  background-color: #27ae60;
+}
+
+.btn-estado:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-cerrar {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background-color: #7f8c8d;
+  color: #fff;
+  font-weight: 500;
+}
+
+.error {
+  color: #c0392b;
+  text-align: center;
+  margin-bottom: 10px;
+}

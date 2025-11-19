@@ -1,109 +1,112 @@
-// src/components/layout.jsx
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useMemo } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
-import { useMenu } from "../context/MenuContext";
+import { useMenu } from "../hooks/useMenu.js";
+import { useAuth } from "../hooks/useAuth.js"; 
 import "../styles/layout.css";
+import LogoutButton from "../components/LogoutButton"; 
+import { routesMap } from "../config/routesMap";
 
-// Imágenes
-import inicioImg from "../assets/inicio.jpg";
-import clientesImg from "../assets/clientes.jpg";
-import consultarproyectosImg from "../assets/consultarproyectos.jpeg";
-import proyectosImg from "../assets/proyectos.jpeg";
-import reportesImg from "../assets/reportes.jpeg";
-import seguridadImg from "../assets/seguridad.jpeg";
-
-function Layout({ children, setIsAuthenticated }) {
-  const { menuAbierto, setMenuAbierto, mostrarSubmenu, setMostrarSubmenu } = useMenu();
+export default function Layout() {
+  const { menuAbierto, toggleMenu, mostrarSubmenu, toggleSubmenu, setMostrarSubmenu } = useMenu();
   const navigate = useNavigate();
+  const { permissions: permisos, userName: usuario } = useAuth(); 
 
-  const modulos = [
-    { nombre: "Inicio", imagen: inicioImg, ruta: "/inicio" },
-    { nombre: "Clientes", imagen: clientesImg, ruta: "/clientes" },
-    { nombre: "Proyectos", imagen: proyectosImg, ruta: "/proyectos" },
-    { nombre: "Consultar Proyectos", imagen: consultarproyectosImg, ruta: "/consultar" },
-    { nombre: "Reportes", imagen: reportesImg, ruta: "/reportes" },
-    { nombre: "Seguridad", imagen: seguridadImg, ruta: "/seguridad" },
-  ];
+  const modulos = useMemo(() => {
+    if (!permisos || permisos.length === 0) return [];
 
-  const toggleMenu = () => setMenuAbierto(!menuAbierto);
+    const modMap = {};
+    const submenusSet = new Set();
 
-  const handleLogout = () => {
-    if (window.confirm("¿Deseas cerrar sesión?")) {
-      if (setIsAuthenticated) setIsAuthenticated(false);
-      localStorage.removeItem("isAuthenticated");
-      alert("Sesión cerrada correctamente.");
-      navigate("/");
-    }
-  };
+    permisos.forEach(p => {
+      const nombreModulo = p.nombreModulo;
+      const nombreSubmodulo = p.nombreSubmodulo;
+
+      if (!modMap[nombreModulo]) {
+        modMap[nombreModulo] = { nombre: nombreModulo, submenus: [] };
+      }
+
+      if (routesMap[nombreModulo]) {
+        // Filtrar solo el submódulo permitido en Reportes
+        if (nombreModulo === "Reportes" && nombreSubmodulo !== "Personalizado") return;
+
+        const submenuFound = routesMap[nombreModulo].submenus.find(
+          s => s.nombre === nombreSubmodulo
+        );
+        if (submenuFound) {
+          const submenuKey = `${nombreModulo}-${submenuFound.rutaFrontend}`;
+          if (!submenusSet.has(submenuKey)) {
+            modMap[nombreModulo].submenus.push({
+              nombre: submenuFound.nombre,
+              ruta: submenuFound.rutaFrontend
+            });
+            submenusSet.add(submenuKey);
+          }
+        }
+      }
+    });
+
+    const orden = ["Inicio", "Clientes", "Proyectos", "Consultar", "Reportes", "Seguridad"];
+    orden.forEach(name => {
+      if (!modMap[name]) {
+        modMap[name] = { nombre: name, submenus: [] };
+      }
+    });
+
+    return orden
+      .filter(name => 
+          modMap[name] && (modMap[name].submenus.length > 0 || name === "Inicio" || name === "")
+      )
+      .map(name => modMap[name]);
+  }, [permisos]);
 
   const handleModuloClick = (modulo) => {
-    if (["Seguridad", "Clientes", "Proyectos", "Reportes"].includes(modulo.nombre)) {
-      setMostrarSubmenu((prev) => (prev === modulo.nombre ? null : modulo.nombre));
+    if (modulo.submenus?.length) {
+      toggleSubmenu(modulo.nombre);
     } else {
-      navigate(modulo.ruta);
-      setMostrarSubmenu(null);
+      const rutaBase = modulo.nombre.toLowerCase().replace(/\s+/g, "");
+      navigate(`/${rutaBase}`);
+      setMostrarSubmenu(null); 
     }
   };
 
   return (
-    <div className={`layout-container ${menuAbierto ? "" : "menu-colapsado"}`}>
-      <button className="toggle-btn" onClick={toggleMenu}>
+    <div className="layout-container">
+      <button className="toggle-btn" onClick={toggleMenu} title="Abrir/Cerrar Menú">
         <Menu size={24} />
       </button>
 
       <aside className={`menu-lateral ${menuAbierto ? "abierto" : "cerrado"}`}>
-        <h2>Menú</h2>
-        <ul>
-          {modulos.map((modulo, index) => (
-            <React.Fragment key={index}>
-              <li onClick={() => handleModuloClick(modulo)}>{modulo.nombre}</li>
+        <div className="menu-superior">
+          <h2>Menú</h2> 
+          {usuario && <p className="user-name">Bienvenido, <strong>{usuario}</strong></p>}
 
-              {/* Submenús */}
-              {modulo.nombre === "Clientes" && mostrarSubmenu === "Clientes" && (
-                <ul className="submenu">
-                  <li onClick={() => navigate("/clientes/registrar")}>Registrar Cliente</li>
-                  <li onClick={() => navigate("/clientes/detalle")}>Detalle de Clientes</li>
-                </ul>
-              )}
+          <ul>
+            {modulos.map((modulo, index) => (
+              <React.Fragment key={index}>
+                <li onClick={() => handleModuloClick(modulo)}>{modulo.nombre}</li>
+                {modulo.submenus?.length && mostrarSubmenu === modulo.nombre && (
+                  <ul className="submenu"> 
+                    {modulo.submenus.map((item, i) => (
+                      <li key={i} onClick={() => navigate(item.ruta)}>
+                        {item.nombre}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </React.Fragment>
+            ))}
+          </ul>
+        </div>
 
-              {modulo.nombre === "Seguridad" && mostrarSubmenu === "Seguridad" && (
-                <ul className="submenu">
-                  <li onClick={() => navigate("/seguridad/usuarios")}>Gestión de Usuarios</li>
-                  <li onClick={() => navigate("/seguridad/roles")}>Gestión de Roles</li>
-                  <li onClick={() => navigate("/seguridad/restablecer")}>Restablecer Contraseña</li>
-                  <li onClick={() => navigate("/seguridad/baja")}>Baja de Usuarios</li>
-                </ul>
-              )}
-
-              {modulo.nombre === "Reportes" && mostrarSubmenu === "Reportes" && (
-                <ul className="submenu">
-                  <li onClick={() => navigate("/reportes/porfecha")}>Por Fecha</li>
-                  <li onClick={() => navigate("/reportes/porcliente")}>Por Cliente</li>
-                  <li onClick={() => navigate("/reportes/pordiseñador")}>Por Diseñador</li>
-                  <li onClick={() => navigate("/reportes/tipodepieza")}>Por Tipo de Pieza</li>
-                  <li onClick={() => navigate("/reportes/personalizado")}>Personalizado</li>
-                </ul>
-              )}
-
-              {modulo.nombre === "Proyectos" && mostrarSubmenu === "Proyectos" && (
-                <ul className="submenu">
-                  <li onClick={() => navigate("/proyectos/nuevo")}>Nuevo Proyecto</li>
-                  <li onClick={() => navigate("/proyectos/listado")}>Listado de Proyectos</li>
-                </ul>
-              )}
-            </React.Fragment>
-          ))}
-        </ul>
-
-        <button className="logout-btn" onClick={handleLogout}>
-          Cerrar sesión
-        </button>
+        <div className="menu-inferior">
+          <LogoutButton />
+        </div>
       </aside>
 
-      <main className="contenido-principal">{children}</main>
+      <main className={`contenido-principal ${menuAbierto ? "menu-abierto" : "menu-colapsado"}`}>
+        <Outlet />
+      </main>
     </div>
   );
 }
-
-export default Layout;

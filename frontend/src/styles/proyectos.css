@@ -1,0 +1,223 @@
+/* --------------------------------------- */
+/*            CONTENEDOR PRINCIPAL        */
+/* --------------------------------------- */
+.proyecto-form-container {
+  width: 95%;
+  max-width: 1150px; /* ancho máximo razonable */
+  padding: 20px;
+  margin: 20px auto;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.4s ease;
+  max-height: 85vh; 
+  overflow-y: auto; /* scroll interno vertical */
+  overflow-x: hidden; /* evita scroll horizontal */
+  box-sizing: border-box;
+}
+
+/* --------------------------------------- */
+/*                 TÍTULO                  */
+/* --------------------------------------- */
+.proyecto-form-container h2 {
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 28px;
+}
+
+/* --------------------------------------- */
+/*             FORMULARIO 2 COLUMNAS       */
+/* --------------------------------------- */
+.proyecto-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 40px; /* gap entre filas y columnas */
+  padding: 10px 5px;
+  justify-items: center; /* centra los elementos en cada columna */
+  box-sizing: border-box;
+}
+
+.proyecto-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 14px;
+  color: #1a237e;
+  width: 100%;
+  max-width: 300px; /* ancho máximo de cada campo */
+  box-sizing: border-box;
+}
+
+/* --------------------------------------- */
+/*   INPUTS, SELECTS Y TEXTAREA ALINEADOS  */
+/* --------------------------------------- */
+.proyecto-form input,
+.proyecto-form select,
+.proyecto-form textarea {
+  margin-top: 8px;
+  border: 1px solid #cfd8dc;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  background: #fafbfc;
+  transition: 0.2s ease;
+  width: 100%;       /* ocupa todo el label, que ya tiene max-width */
+  box-sizing: border-box;
+}
+
+.proyecto-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* --------------------------------------- */
+/*                BOTONES                   */
+/* --------------------------------------- */
+.btn-submit,
+.btn-cancelar {
+  grid-column: 1 / 3;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-submit {
+  background: #0d47a1;
+  color: #fff;
+}
+
+.btn-submit:hover {
+  background: #1565c0;
+}
+
+.btn-cancelar {
+  background: #eceff1;
+  color: #333;
+}
+
+.btn-cancelar:hover {
+  background: #d5d9dc;
+}
+
+/* --------------------------------------- */
+/*                BOTONES SUPERIORES       */
+/* --------------------------------------- */
+.btn-editar,
+.btn-facturacion {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  color: #fff;
+}
+
+/* Botón Editar */
+.btn-editar {
+  background-color: #3498db;
+}
+
+.btn-editar:hover {
+  background-color: #117b9b;
+}
+
+/* Botón Ver Facturación */
+.btn-facturacion {
+  background-color: #9b59b6;
+}
+
+.btn-facturacion:hover {
+  background-color: #6a1b9a;
+}
+
+/* Opcional: estilo para contenedor de botones en header */
+.proyecto-detalle-acciones {
+  display: flex;
+  gap: 12px;
+}
+
+
+/* --------------------------------------- */
+/*           SELECT DE TRATAMIENTO         */
+/* --------------------------------------- */
+.select-tratamiento {
+  width: 60px; /* igual que el contenedor para que no se sobreponga */
+  padding: 2px 4px;
+  font-size: 12px;
+  border: 1px solid #d0d7dd;
+  border-radius: 4px;
+  background: #f2f4f7;
+  cursor: pointer;
+  text-align: center;
+}
+.select-tratamiento:hover {
+  background: #ffffff;
+  border-color: #90caf9;
+}
+
+.select-tratamiento:focus {
+  outline: none;
+  border-color: #0d47a1;
+  box-shadow: 0 0 0 2px rgba(13, 71, 161, 0.18);
+}
+
+/* --------------------------------------- */
+/*         IMÁGENES NUEVAS Y EXISTENTES    */
+/* --------------------------------------- */
+.imagenes-nuevas,
+.imagenes-existentes {
+  margin-top: 10px;
+}
+
+.imagenes-grid-mini {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.imagen-existente-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 12px;
+}
+
+.btn-ver-mini {
+  font-size: 11px;
+  padding: 2px 6px;
+  background: #0d47a1;
+  color: #fff;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-top: 2px;
+}
+
+.btn-ver-mini:hover {
+  background: #1565c0;
+}
+
+/* --------------------------------------- */
+/*            MEDIA QUERIES               */
+/* --------------------------------------- */
+@media (max-width: 900px) {
+  .proyecto-form {
+    grid-template-columns: 1fr;
+    justify-items: stretch; /* ocupa todo el ancho */
+  }
+
+  .fila-odonto {
+    justify-content: flex-start;
+  }
+
+  .proyecto-form label {
+    max-width: 100%;
+  }
+}

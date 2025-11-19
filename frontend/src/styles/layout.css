@@ -8,7 +8,7 @@
 }
 
 /* Botón hamburguesa */
-.toggle-btn{
+.toggle-btn {
   position: absolute;
   top: 20px;
   left: 10px;
@@ -34,6 +34,10 @@
   padding: 60px 20px 20px;
   transition: width 0.3s ease, transform 0.3s ease;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* empuja logout abajo */
+  height: 100%;
   z-index: 1000;
 }
 
@@ -65,7 +69,7 @@
   background-color: #10b6bf;
 }
 
-.menu-colapsado .menu-lateral{
+.menu-colapsado .menu-lateral {
   margin-left: 0;
 }
 
@@ -77,28 +81,7 @@
   transition: margin-left 0.3s ease;
 }
 
-/* 🔒 Botón de cerrar sesión */
-.logout-btn {
-  background-color: #606464;
-  font-size: 18px;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  margin: 5px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  width: calc(14.2% - 10px);
-  transition: background-color 0.3s ease;
-  position: absolute;
-  bottom: 40px;
-  right: 2;
-}
-
-.logout-btn:hover {
-  background-color: #817f7f;
-}
-
+/* Submenu */
 .submenu {
   margin-left: 15px;
   list-style: none;
@@ -114,4 +97,46 @@
 
 .submenu li:hover {
   text-decoration: underline;
+}
+
+/* Nombre de usuario en el menú lateral */
+.user-name {
+  background-color: #3c9aba;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 12px;
+  margin: 15px 0;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.user-name:hover {
+  background-color: #468ca0;
+  transform: scale(1.05);
+}
+
+/* Botón de logout (parte inferior) */
+.menu-inferior {
+  position: absolute;
+  bottom: 40px;
+  width: 1%;
+  text-align: center;
+}
+
+.btn-logout {
+  background-color: #c0392b;
+  color: white;
+  padding: 15px 46px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.btn-logout:hover {
+  background-color: #e74c3c;
 }

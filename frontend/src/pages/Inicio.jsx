@@ -1,13 +1,11 @@
-// src/pages/Inicio.jsx
 import React from "react";
+import { useMenu } from "../hooks/useMenu";
+import { useAuth } from "../hooks/useAuth.js";
 import { useNavigate } from "react-router-dom";
-import Layout from "../components/layout";
-import "../styles/Inicio.css"; // crea este archivo para estilos
-import { useMenu } from "../context/MenuContext"; // 👈 Importar el contexto
+import "../styles/Inicio.css";
+import { routesMap } from "../config/routesMap";
 
-
-
-//imágenes
+// imágenes
 import inicioImg from "../assets/inicio.jpg";
 import clientesImg from "../assets/clientes.jpg";
 import consultarproyectosImg from "../assets/consultarproyectos.jpeg";
@@ -15,50 +13,51 @@ import proyectosImg from "../assets/proyectos.jpeg";
 import reportesImg from "../assets/reportes.jpeg";
 import seguridadImg from "../assets/seguridad.jpeg";
 
-
 function Inicio() {
+  const { menuAbierto, setMenuAbierto, setMostrarSubmenu } = useMenu();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const { menuAbierto, setMenuAbierto, setMostrarSubmenu } = useMenu(); // 👈 Obtenemos el estado global
 
+  const email = user?.email || "";
+  const permissions = user?.permissions || [];
 
-
-
-  // Lista de módulos con nombre e imagen opcional
-  const modulos = [
-    { nombre: "Inicio", imagen: inicioImg, ruta: "/inicio" },
-    { nombre: "Clientes", imagen: clientesImg, ruta: "/clientes" },
-    { nombre: "Proyectos", imagen: proyectosImg, ruta: "/proyectos" },
-    { nombre: "Consultar Proyectos", imagen: consultarproyectosImg, ruta: "/consultar" },
-    { nombre: "Reportes", imagen: reportesImg, ruta: "/reportes" },
-    { nombre: "Seguridad", imagen: seguridadImg, ruta: "/seguridad" },
+  const modulosDisponibles = [
+    { nombre: "Inicio", imagen: inicioImg },
+    { nombre: "Clientes", imagen: clientesImg },
+    { nombre: "Proyectos", imagen: proyectosImg },
+    { nombre: "Consultar Proyectos", imagen: consultarproyectosImg },
+    { nombre: "Reportes", imagen: reportesImg },
+    { nombre: "Seguridad", imagen: seguridadImg },
   ];
 
-  const handleClickModulo = (modulo) => {
-    if (!menuAbierto) setMenuAbierto(true); // abre el menú si está cerrado
+  const modulos = modulosDisponibles.filter(mod => 
+    permissions.some(p => p.nombreModulo === mod.nombre) || mod.nombre === "Inicio"
+  );
 
-    // Si el módulo tiene submenú, lo despliega en lugar de navegar
-  if (["Seguridad", "Clientes", "Proyectos", "Reportes"].includes(modulo.nombre)) {
+  const handleClickModulo = (modulo) => {
+    if (!menuAbierto) setMenuAbierto(true);
     setMostrarSubmenu(modulo.nombre);
-   } else {
-    setMostrarSubmenu(null);
-    navigate(modulo.ruta);
-   }
+
+    const ruta = routesMap[modulo.nombre]?.rutaFrontend || "/inicio";
+    navigate(ruta);
   };
 
   return (
-    <Layout>  
-        <h1>Bienvenido a la Plataforma MAER</h1>
-        <div className="grid-modulos">
-          {modulos.map((modulo, index) => (
-            <div key={index} className="card-modulo">
-              <img src={modulo.imagen} alt={modulo.nombre} className="img-modulo" />
-             <button onClick={() => handleClickModulo(modulo)}>
+    <div className="inicio-container">
+      <h1>Bienvenido a la Plataforma MAER</h1>
+      {email && <p className="bienvenida-texto"><strong>{email}</strong></p>}
+
+      <div className="grid-modulos">
+        {modulos.map((modulo, index) => (
+          <div key={index} className="card-modulo">
+            <img src={modulo.imagen} alt={modulo.nombre} className="img-modulo" />
+            <button onClick={() => handleClickModulo(modulo)}>
               {modulo.nombre}
             </button>
           </div>
         ))}
       </div>
-    </Layout>
+    </div>
   );
 }
 

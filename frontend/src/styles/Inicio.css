@@ -1,97 +1,35 @@
 .inicio-container {
+  /* Este contenedor debería ser flex: 1 dentro de Layout, no 100vh */
+  /* Lo dejo como está, pero ten en cuenta que Layout ya maneja 100vh */
   display: flex;
-  height: 100vh;
+  /* height: 100vh; <-- Esta línea podría ser problemática si se usa dentro de Layout */
   background-color: #f8f9fa;
   position: relative;
   transition: all 0.3s ease;
   font-family: "Poppins", sans-serif;
+  flex-direction: column; /* Asegura que el contenido fluya verticalmente */
+  width: 100%;
 }
 
-/* Botón hamburguesa */
-.boton-menu {
-  position: absolute;
-  top: 20px;
-  left: 10px;
-  background: #117b9b;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px;
-  cursor: pointer;
-  z-index: 1001;
-  transition: background 0.3s;
-}
-
-.boton-menu:hover {
-  background: #2091c6;
-}
-
-/* Menú lateral */
-.menu-lateral {
-  width: 220px;
-  background-color: #13768f;
-  color: white;
-  padding: 60px 20px 20px;
-  transition: width 0.3s ease, transform 0.3s ease;
-  overflow: hidden;
-  z-index: 1000;
-}
-
-.menu-lateral.cerrado {
-  width: 0;
-  padding: 60px 0;
-  transform: translateX(-100%);
-}
-
-.menu-lateral h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.menu-lateral ul {
-  list-style: none;
-  padding: 0;
-}
-
-.menu-lateral li {
-  padding: 10px;
-  margin: 5px 0;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.3s;
-}
-
-.menu-lateral li:hover {
-  background-color: #10b6bf;
-}
-
-/* Contenido principal */
-.contenido-principal {
-  flex: 1;
-  padding: 20px;
-  text-align: center;
-  margin-left: 0px;
-  transition: margin-left 0.3s ease;
-}
-
-.menu-colapsado .contenido-principal {
-  margin-left: 0;
-}
+/* ⚠️ ELIMINADAS: boton-menu y todas las reglas de menu-lateral que duplicaban layout.css */
 
 /* Cuadrícula de módulos */
 .grid-modulos {
   display: grid;
+  /* Ajuste para que sea responsive: mínimo 300px, máximo 1fr */
   grid-template-columns: repeat(3, 1fr);
   gap: 25px;
-  margin-top: 30px;
+  margin-top: 0px;
   justify-items: center;
+  padding: 0 10px; /* Añadir padding para pantallas pequeñas */
 }
 
 .card-modulo {
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 360px;
+  width: 100%; /* Ajuste para ser responsive */
+  max-width: 360px; /* Límite para que no se estire demasiado */
   height: 240px;
   display: flex;
   flex-direction: column;
@@ -102,7 +40,7 @@
 }
 
 .card-modulo:hover {
-  transform: scale(1.05);
+  transform: scale(1.03); /* Escala ligeramente menor para ser más sutil */
 }
 
 .img-modulo {
@@ -126,4 +64,18 @@
 
 .card-modulo button:hover {
   background-color: #11b1bf;
+}
+
+/* Móviles: 1 columna */
+@media (max-width: 768px) {
+  .grid-modulos {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Pantallas grandes: máximo 3 columnas */
+@media (min-width: 1400px) {
+  .grid-modulos {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }

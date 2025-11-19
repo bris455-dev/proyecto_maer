@@ -1,0 +1,102 @@
+/* Contenedor principal */
+.baja-usuarios-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 25px;
+  font-family: 'Inter', sans-serif;
+  color: #1f2937;
+  background-color: #f1f5f9;
+  border-radius: 12px;
+}
+
+/* Título principal */
+.baja-usuarios-container h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #426499;
+  margin-bottom: 20px;
+}
+
+/* Mensajes */
+.baja-usuarios-container p {
+  background-color: #e0f2fe;
+  color: #1f2937;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+/* Contenedor de tabla para scroll */
+.baja-usuarios-table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+}
+
+/* Tabla de usuarios */
+.baja-usuarios-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+}
+
+/* Encabezados */
+.baja-usuarios-table th,
+.baja-usuarios-table td {
+  padding: 10px;
+  text-align: center;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #ffffff; /* Color unificado */
+}
+
+/* Encabezado principal */
+.baja-usuarios-table th {
+  background: linear-gradient(135deg, #2991cd, #2991cd);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Hover filas */
+.baja-usuarios-table tbody tr:hover td {
+  background-color: #e0f2fe;
+  transition: background-color 0.2s;
+}
+
+/* Botones */
+.baja-usuarios-table button {
+  background: linear-gradient(135deg, #2991cd, #2991cd);
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.baja-usuarios-table button:hover {
+  background: linear-gradient(135deg, #22a5b9, #78c7ee);
+  transform: translateY(-2px);
+}
+
+/* Scroll vertical tabla */
+.baja-usuarios-table-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.baja-usuarios-table-container::-webkit-scrollbar-thumb {
+  background: #426499;
+  border-radius: 4px;
+}
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+  .baja-usuarios-table th,
+  .baja-usuarios-table td {
+    font-size: 0.8rem;
+    padding: 6px 8px;
+  }
+}

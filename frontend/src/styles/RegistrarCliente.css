@@ -1,0 +1,172 @@
+/* =======================================
+   Contenedor principal
+======================================= */
+.clientes-container {
+  max-width: 320px; /* mucho más estrecho */
+  margin: 60px auto; /* centrado vertical y horizontal */
+  padding: 15px 15px;
+  font-family: "Poppins", sans-serif;
+  animation: fadeIn 0.5s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centra todo el contenido */
+}
+
+/* Título */
+.clientes-container h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* Tarjeta del formulario */
+.form-card {
+  background-color: #ffffff;
+  padding: 20px 20px; /* padding interno compacto */
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  width: 65%; /* ocupa todo el contenedor, que ahora es más estrecho */
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* espacio entre inputs */
+}
+
+.form-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Inputs del formulario */
+form input {
+  width: 80%; /* ligeramente menor que la tarjeta */
+  margin: 0 auto 15px auto; /* centrado horizontal */
+  padding: 10px 12px; /* menos padding para no aumentar ancho */
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+form input:focus {
+  border-color: #117b9b;
+  box-shadow: 0 3px 10px rgba(17, 123, 155, 0.25);
+  outline: none;
+}
+
+/* Botón de enviar */
+form button {
+  width: 80%; /* mismo ancho que los inputs */
+  margin: 0 auto;
+  background-color: #117b9b;
+  color: white;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+form button:hover {
+  background-color: #0e5d6d;
+  transform: scale(1.03);
+}
+
+form button:disabled {
+  background-color: #7ea1ae;
+  cursor: not-allowed;
+}
+
+
+
+/* Warning */
+.warning {
+  color: #c0392b;
+  font-weight: 500;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Animación fadeIn */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =======================================
+   Modal Overlay
+======================================= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(44, 62, 80, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Contenido del modal */
+.modal-content {
+  background: #ffffff;
+  padding: 35px 40px;
+  border-radius: 15px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Tipos de modal */
+.modal-content.success {
+  border-left: 6px solid #2ecc71;
+}
+
+.modal-content.error {
+  border-left: 6px solid #e74c3c;
+}
+
+.modal-content.info {
+  border-left: 6px solid #117b9b;
+}
+
+/* Mensaje del modal */
+.modal-content p {
+  font-size: 16px;
+  margin-bottom: 25px;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* Botón del modal */
+.modal-content button {
+  background-color: #117b9b;
+  color: white;
+  padding: 12px 35px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.modal-content button:hover {
+  background-color: #0e5d6d;
+  transform: scale(1.05);
+}

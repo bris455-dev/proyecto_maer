@@ -11,10 +11,36 @@ class RoleMiddleware
     {
         $user = $request->user();
 
-        if (!$user || !in_array($user->rol, $roles)) {
-            return response()->json(['error' => 'No autorizado'], 403);
+        // 🔹 Si no está autenticado → 401
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Usuario no autenticado.'
+            ], 401);
         }
 
+        // 🔹 Validar que el usuario tenga rol asignado
+        if (!$user->rol) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'El usuario no tiene un rol asignado.'
+            ], 403);
+        }
+
+        // 🔹 Obtener nombre del rol
+        $nombreRol = $user->rol->nombreRol;
+
+        // 🔹 Verificar si su rol está permitido para la ruta
+        if (!in_array($nombreRol, $roles)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No autorizado. Rol insuficiente.',
+                'rol_actual' => $nombreRol,
+                'roles_permitidos' => $roles
+            ], 403);
+        }
+
+        // 🔹 Permitir continuar
         return $next($request);
     }
 }

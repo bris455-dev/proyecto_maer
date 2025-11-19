@@ -9,27 +9,21 @@ return [
     | Stateful Domains
     |--------------------------------------------------------------------------
     |
-    | Requests from the following domains / hosts will receive stateful API
-    | authentication cookies. Typically, these should include your local
-    | and production domains which access your API via a frontend SPA.
+    | 🚫 No usamos dominios stateful porque el frontend (React) y backend (Laravel)
+    | se comunican únicamente mediante tokens personales (Bearer).
+    | Esto evita el uso de cookies y el problema del token CSRF.
     |
     */
 
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-        '%s%s',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
-        Sanctum::currentApplicationUrlWithPort()
-    ))),
+    'stateful' => [],
 
     /*
     |--------------------------------------------------------------------------
     | Sanctum Guards
     |--------------------------------------------------------------------------
     |
-    | This array contains the authentication guards that will be checked when
-    | Sanctum is trying to authenticate a request. If none of these guards
-    | are able to authenticate the request, Sanctum will use the bearer
-    | token that's present on an incoming request for authentication.
+    | Solo dejamos el guard "web" activo por compatibilidad,
+    | aunque las rutas protegidas usan auth:sanctum.
     |
     */
 
@@ -40,28 +34,30 @@ return [
     | Expiration Minutes
     |--------------------------------------------------------------------------
     |
-    | This value controls the number of minutes until an issued token will be
-    | considered expired. If this value is null, personal access tokens do
-    | not expire. This won't tweak the lifetime of first-party sessions.
+    | Define el tiempo de expiración de los tokens personales.
+    | Si quieres que el token no expire automáticamente, usa null.
+    |
+    | Ejemplo:
+    | - 30  → expira en 30 minutos
+    | - null → no expira automáticamente
     |
     */
 
-    'expiration' => null,
+    'expiration' => 30,
 
     /*
     |--------------------------------------------------------------------------
     | Sanctum Middleware
     |--------------------------------------------------------------------------
     |
-    | When authenticating your first-party SPA with Sanctum you may need to
-    | customize some of the middleware Sanctum uses while processing the
-    | request. You may change the middleware listed below as required.
+    | Aquí definimos los middlewares usados para cookies y CSRF.
+    | Como tu API trabaja con tokens Bearer, deshabilitamos ambos.
     |
     */
 
     'middleware' => [
-        'verify_csrf_token' => App\Http\Middleware\VerifyCsrfToken::class,
-        'encrypt_cookies' => App\Http\Middleware\EncryptCookies::class,
+        // ❌ No necesitamos cookies ni CSRF para tokens personales
+        // 'verify_csrf_token' => App\Http\Middleware\VerifyCsrfToken::class,
+        // 'encrypt_cookies' => App\Http\Middleware\EncryptCookies::class,
     ],
-
 ];

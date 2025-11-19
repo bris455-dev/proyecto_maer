@@ -1,0 +1,184 @@
+/* ========================== */
+/* RESET Y BASES */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ========================== */
+/* CONFIGURACIÓN DEL FONDO DE IMAGEN Y BRILLO */
+
+body {
+  /* 1. Imagen como fondo: Corregida la ruta para src/assets/ */
+  background-image: url('../src/assets/logo1.png'); /* Ajusta la ruta si es necesario */
+  /* 2. Asegura que la imagen cubra todo el fondo */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+/* 2. Definición de la animación de brillo (gradual white opacity) */
+@keyframes whiteShine {
+  0% {
+    opacity: 0.05;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+/* 3. Crea el pseudo-elemento ::before para la capa blanca animada */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  pointer-events: none;
+  z-index: 1;
+
+  /* Aplica la animación: 1 segundo, repetición infinita, alterna */
+  animation: whiteShine 3s infinite alternate ease-in-out;
+}
+
+/* ========================== */
+/* CONTENEDOR PRINCIPAL */
+.login-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* ========================== */
+/* EFECTOS ABSTRACTOS DIFUMINADOS */
+
+.login-container::before,
+.login-container::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.5;
+  z-index: 0;
+}
+
+.login-container::before {
+  width: 350px;
+  height: 350px;
+  background: #26aac8;
+  top: -120px;
+  left: -120px;
+}
+
+.login-container::after {
+  width: 450px;
+  height: 450px;
+  background: #516ea0;
+  bottom: -150px;
+  right: -100px;
+}
+
+/* ========================== */
+/* TARJETA DE LOGIN */
+.login-card {
+  position: relative;
+  z-index: 3;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px 30px;
+  border-radius: 16px;
+  width: 350px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+
+.login-card .logo {
+  width: 320px;
+  margin-bottom: 15px;
+}
+
+.login-card h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* ========================== */
+/* INPUTS Y BOTONES */
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+}
+
+.form-group input,
+.btn-login {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.form-group input:focus {
+  border-color: #25acb0;
+  box-shadow: 0 0 8px rgba(15, 161, 149, 0.3);
+}
+
+/* BOTÓN */
+.btn-login {
+  background: #2898b7;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.btn-login:hover {
+  background: #2f9dc5;
+}
+
+/* ========================== */
+/* TEXTO ADICIONAL */
+.extra-text {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #555;
+}
+
+.extra-text a {
+  color: #e9150e;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.extra-text a:hover {
+  text-decoration: underline;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1em;
+}

@@ -1,14 +1,13 @@
 import React from "react";
-import Layout from "../../components/layout";
+import Layout from "../../components/Layout.jsx";
 
-function Clientes({ setIsAuthenticated }) {
+function Clientes() {
   return (
-    <Layout setIsAuthenticated={setIsAuthenticated}>
+    <Layout>
       <h1>Gestión de Clientes</h1>
-      <p>Aquí podrás ver, agregar o editar clientes del sistema.</p>
+      <p>Selecciona una opción del submenú para registrar o consultar clientes.</p>
     </Layout>
   );
 }
 
 export default Clientes;
-

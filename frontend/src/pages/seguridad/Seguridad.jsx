@@ -1,9 +1,9 @@
 import React from "react";
-import Layout from "../../components/layout";
+import Layout from "../../components/Layout.jsx";
 
-function Seguridad({ setIsAuthenticated }) {
+function Seguridad() {
   return (
-    <Layout setIsAuthenticated={setIsAuthenticated}>
+    <Layout>
       <h1>Configuración de Seguridad</h1>
       <p>Administra usuarios, contraseñas, autenticación MFA y roles de acceso.</p>
     </Layout>
@@ -11,4 +11,3 @@ function Seguridad({ setIsAuthenticated }) {
 }
 
 export default Seguridad;
-

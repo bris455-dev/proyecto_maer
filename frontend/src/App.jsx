@@ -1,109 +1,98 @@
+import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { MenuProvider } from "./context/MenuContext";
-import React, { useState } from "react";
+import { useAuth } from "./hooks/useAuth.js";
+import Layout from "./components/Layout.jsx";
 
-import Login from "./components/login.jsx";
+// Páginas públicas
+import Login from "./pages/auth/Login.jsx";
+import MFA from "./pages/auth/MFA.jsx";
+import FirstAccess from "./pages/auth/FirstAccess.jsx";
+import ForgotPassword from "./pages/public/ForgotPassword.jsx";
+import ResetPassword from "./pages/public/ResetPassword.jsx";
+
+// Páginas privadas
 import Inicio from "./pages/Inicio.jsx";
+
+// Clientes
+import ListadoClientes from "./pages/clientes/ListadoClientes.jsx";
+import RegistrarCliente from "./pages/clientes/RegistrarCliente.jsx";
+import EditarCliente from "./pages/clientes/EditarCliente.jsx";
 import Clientes from "./pages/clientes/Clientes.jsx";
+
+// Proyectos
 import Proyectos from "./pages/proyectos/Proyectos.jsx";
-import Consultar from "./pages/Consultar.jsx";
+import ProyectoDetalle from "./pages/proyectos/ProyectoDetalle.jsx";
+import ProyectoForm from "./pages/proyectos/ProyectoForm.jsx";
+import ProyectoBilling from "./pages/proyectos/ProyectoFacturado.jsx";
+
+// Reportes y Seguridad
 import Reportes from "./pages/reportes/Reportes.jsx";
 import Seguridad from "./pages/seguridad/Seguridad.jsx";
-import ForgotPassword from "./pages/ForgotPassword.jsx";
-import ResetPassword from "./pages/ResetPassword.jsx";
+import BajaUsuarios from "./pages/seguridad/BajaUsuarios.jsx";
+import CrearUsuario from "./pages/seguridad/CrearUsuario.jsx";
+import CambiarPassword from "./pages/seguridad/CambiarPassword.jsx";
+// Opcional: si quieres crear búsqueda de usuarios
+// import BuscarUsuarios from "./pages/seguridad/BuscarUsuarios.jsx";
+
+// Layout privado
+const PrivateLayout = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/" replace />;
+  return <Layout>{children}</Layout>;
+};
 
 function App() {
-  // ✅ Cargar el estado inicial directamente desde localStorage
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem("isAuthenticated") === "true";
-  });
-
-  // 🔹 Manejar login / logout
-  const handleAuthChange = (value) => {
-    setIsAuthenticated(value);
-    if (value) {
-      localStorage.setItem("isAuthenticated", "true");
-    } else {
-      localStorage.removeItem("isAuthenticated");
-    }
-  };
-
-  // 🔹 Ruta protegida
-  const PrivateRoute = ({ children }) => {
-    return isAuthenticated ? children : <Navigate to="/" replace />;
-  };
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) return <div>Cargando...</div>;
 
   return (
     <BrowserRouter>
-      <MenuProvider>
-        <Routes>
-          {/* 🔹 RUTAS PÚBLICAS */}
-          <Route
-            path="/"
-            element={<Login setIsAuthenticated={handleAuthChange} />}
-          />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+      <Routes>
+        {/* Páginas públicas */}
+        <Route
+          path="/"
+          element={isAuthenticated ? <Navigate to="/inicio" replace /> : <Login />}
+        />
+        <Route path="/mfa" element={<MFA />} />
+        <Route path="/first-access" element={<FirstAccess />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* 🔹 RUTAS PROTEGIDAS */}
-          <Route
-            path="/inicio"
-            element={
-              <PrivateRoute>
-                <Inicio setIsAuthenticated={handleAuthChange} />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/clientes/*"
-            element={
-              <PrivateRoute>
-                <Clientes setIsAuthenticated={handleAuthChange} />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/proyectos/*"
-            element={
-              <PrivateRoute>
-                <Proyectos setIsAuthenticated={handleAuthChange} />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/consultar"
-            element={
-              <PrivateRoute>
-                <Consultar setIsAuthenticated={handleAuthChange} />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/reportes/*"
-            element={
-              <PrivateRoute>
-                <Reportes setIsAuthenticated={handleAuthChange} />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/seguridad/*"
-            element={
-              <PrivateRoute>
-                <Seguridad setIsAuthenticated={handleAuthChange} />
-              </PrivateRoute>
-            }
-          />
+        {/* Páginas privadas */}
+        <Route element={<PrivateLayout />}>
+          <Route path="/inicio" element={<Inicio />} />
 
-          {/* 🔹 Si no coincide ninguna ruta, redirige según autenticación */}
-          <Route
-            path="*"
-            element={
-              <Navigate to={isAuthenticated ? "/inicio" : "/"} replace />
-            }
-          />
-        </Routes>
-      </MenuProvider>
+          {/* Clientes */}
+          <Route path="/clientes" element={<Clientes />} />
+          <Route path="/clientes/listado" element={<ListadoClientes />} />
+          <Route path="/clientes/nuevo" element={<RegistrarCliente />} />
+          <Route path="/clientes/editar/:id" element={<EditarCliente />} />
+
+          {/* Proyectos */}
+          <Route path="/proyectos" element={<Proyectos />} />
+          <Route path="/proyectos/nuevo" element={<ProyectoForm />} />
+          <Route path="/proyectos/editar/:id" element={<ProyectoForm />} />
+          <Route path="/proyectos/facturado/:id" element={<ProyectoBilling />} />
+          <Route path="/proyectos/:id" element={<ProyectoDetalle />} />
+
+          {/* Reportes */}
+          <Route path="/reportes" element={<Reportes />} />
+
+          {/* Seguridad / Usuarios */}
+          <Route path="/seguridad" element={<Seguridad />} />
+          <Route path="/seguridad/crear-usuario" element={<CrearUsuario />} />
+          <Route path="/seguridad/baja-usuarios" element={<BajaUsuarios />} />
+          <Route path="/seguridad/cambiar-password" element={<CambiarPassword />} />
+          {/* Opcional: búsqueda de usuarios */}
+          {/* <Route path="/seguridad/buscar-usuarios" element={<BuscarUsuarios />} /> */}
+        </Route>
+
+        {/* Ruta catch-all */}
+        <Route
+          path="*"
+          element={<Navigate to={isAuthenticated ? "/inicio" : "/"} replace />}
+        />
+      </Routes>
     </BrowserRouter>
   );
 }

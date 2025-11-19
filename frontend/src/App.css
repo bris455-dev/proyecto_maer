@@ -1,38 +1,52 @@
+/* Estilo base de la app MAER */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f9;
+  color: #333;
 }
 
-.header {
+/* Contenedor principal */
+#root {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #282c34;
-  color: white;
-  padding: 1rem;
+  flex-direction: column;
+  min-height: 100vh;
+  text-align: center;
 }
 
-.container {
-  display: flex;
-}
-
-.sidebar {
-  width: 200px;
-  background: #f4f4f4;
-  padding: 1rem;
-  transition: transform 0.3s ease-in-out;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar li {
-  margin: 1rem 0;
-}
-
-.content {
-  flex: 1;
+/* Tarjetas */
+.card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   padding: 2rem;
+  margin: 1rem auto;
+  width: 90%;
+  max-width: 600px;
+}
+
+/* Botones */
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Enlaces */
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
