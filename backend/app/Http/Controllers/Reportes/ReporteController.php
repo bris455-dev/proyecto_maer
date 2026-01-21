@@ -57,6 +57,13 @@ class ReporteController extends Controller
     {
         try {
             $user = $request->user();
+            
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Usuario no autenticado'
+                ], 401);
+            }
 
             $filters = $request->only([
                 'fecha_inicio',
@@ -67,14 +74,29 @@ class ReporteController extends Controller
             ]);
 
             $data = $this->service->generate($filters, $user);
+            
+            if (empty($data['report']) || (is_array($data['report']) && count($data['report']) === 0)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No hay datos para exportar'
+                ], 400);
+            }
 
-            return $this->service->exportExcel($data['report']);
+            Log::info("Exportando reporte con " . count($data['report']) . " registros");
+            
+            return $this->service->exportExcel($data['report'], 'reporte_' . date('Y-m-d') . '.xlsx');
         } catch (\Throwable $e) {
             Log::error("Error ReporteController@export: " . $e->getMessage());
+            Log::error("Stack trace: " . $e->getTraceAsString());
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'Error al exportar el reporte'
+                'message' => 'Error al exportar el reporte: ' . (config('app.debug') ? $e->getMessage() : 'Error interno'),
+                'debug' => config('app.debug') ? [
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ] : null
             ], 500);
         }
     }

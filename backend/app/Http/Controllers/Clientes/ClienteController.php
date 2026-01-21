@@ -188,4 +188,66 @@ class ClienteController extends Controller
             return response()->json(['status'=>'error','message'=>'Error al cambiar estado del cliente'], 500);
         }
     }
+
+    // 🔹 Eliminar cliente
+    public function destroy($id)
+    {
+        try {
+            $cliente = Cliente::findOrFail($id);
+
+            // Verificar si tiene proyectos asociados
+            $tieneProyectos = \App\Models\Proyecto::where('clienteID', $id)->exists();
+            
+            if ($tieneProyectos) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No se puede eliminar el cliente porque tiene proyectos asociados.'
+                ], 400);
+            }
+
+            // Verificar si tiene usuario asociado
+            $tieneUsuario = \App\Models\User::where('clienteID', $id)->exists();
+            
+            if ($tieneUsuario) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No se puede eliminar el cliente porque tiene un usuario asociado. Elimine primero el usuario.'
+                ], 400);
+            }
+
+            $nombreCliente = $cliente->nombre;
+            $cliente->delete();
+
+            // Registrar acción en bitácora
+            if (auth()->check()) {
+                try {
+                    $this->bitacoraService->registrar(
+                        auth()->user(),
+                        'Eliminación de cliente',
+                        "Cliente eliminado: {$nombreCliente}",
+                        request()->ip()
+                    );
+                } catch (\Throwable $e) {
+                    Log::warning("Fallo en Bitácora (destroy): " . $e->getMessage());
+                }
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Cliente eliminado correctamente.'
+            ], 200);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Cliente no encontrado.'
+            ], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error al eliminar cliente ID {$id}: " . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error al eliminar el cliente.'
+            ], 500);
+        }
+    }
 }

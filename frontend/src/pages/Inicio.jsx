@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useMenu } from "../hooks/useMenu";
 import { useAuth } from "../hooks/useAuth.js";
 import { useNavigate } from "react-router-dom";
+import { isStudent } from "../utils/roleHelper.js";
 import "../styles/Inicio.css";
 import { routesMap } from "../config/routesMap";
 
@@ -12,11 +13,25 @@ import consultarproyectosImg from "../assets/consultarproyectos.jpeg";
 import proyectosImg from "../assets/proyectos.jpeg";
 import reportesImg from "../assets/reportes.jpeg";
 import seguridadImg from "../assets/seguridad.jpeg";
+// Usar reportes como imagen temporal para facturación
+const facturacionImg = reportesImg;
 
 function Inicio() {
   const { menuAbierto, setMenuAbierto, setMostrarSubmenu } = useMenu();
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  // Si el usuario es estudiante, redirigir al dashboard del estudiante
+  useEffect(() => {
+    if (user && isStudent(user)) {
+      navigate('/estudiante/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
+
+  // Si es estudiante, no mostrar nada mientras redirige
+  if (user && isStudent(user)) {
+    return null;
+  }
 
   const email = user?.email || "";
   const permissions = user?.permissions || [];
@@ -27,6 +42,8 @@ function Inicio() {
     { nombre: "Proyectos", imagen: proyectosImg },
     { nombre: "Consultar Proyectos", imagen: consultarproyectosImg },
     { nombre: "Reportes", imagen: reportesImg },
+    { nombre: "Facturación", imagen: facturacionImg },
+    { nombre: "Cursos", imagen: reportesImg },
     { nombre: "Seguridad", imagen: seguridadImg },
   ];
 

@@ -1,14 +1,13 @@
 .inicio-container {
-  /* Este contenedor debería ser flex: 1 dentro de Layout, no 100vh */
-  /* Lo dejo como está, pero ten en cuenta que Layout ya maneja 100vh */
   display: flex;
-  /* height: 100vh; <-- Esta línea podría ser problemática si se usa dentro de Layout */
   background-color: #f8f9fa;
   position: relative;
   transition: all 0.3s ease;
   font-family: "Poppins", sans-serif;
-  flex-direction: column; /* Asegura que el contenido fluya verticalmente */
+  flex-direction: column;
   width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 /* ⚠️ ELIMINADAS: boton-menu y todas las reglas de menu-lateral que duplicaban layout.css */

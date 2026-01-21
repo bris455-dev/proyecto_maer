@@ -10,12 +10,12 @@ class Proyecto extends Model
     protected $primaryKey = 'proyectoID';
     public $incrementing = true;
     protected $keyType = 'int';
-    public $timestamps = true;
+    public $timestamps = false; // La tabla proyecto NO tiene created_at ni updated_at
 
     protected $casts = [
+        'fecha_inicio' => 'date',
+        'fecha_fin' => 'date',
         'fecha_entrega' => 'date',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
         'images' => 'array', // opcional si usas columna json images
     ];
 
@@ -31,6 +31,7 @@ class Proyecto extends Model
         'notas',
         'created_by',
         'estado',
+        'tipificacion',
         'images',
     ];
 

@@ -1,0 +1,163 @@
+/* Contenedor principal */
+.restablecer-contrasena-container {
+  width: 95%;
+  max-width: 1200px;
+  margin: 10px auto;
+  padding: 0px 25px 10px 25px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.restablecer-contrasena-container h1 {
+  color: #0d47a1;
+  font-size: 28px;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+/* Descripción */
+.descripcion {
+  color: #34495e;
+  margin-bottom: 12px;
+  padding: 10px 18px;
+  background-color: #e9f5f9;
+  border-radius: 8px;
+  border: 1px solid #cce7f0;
+  font-size: 15px;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+
+.descripcion strong {
+  color: #0e99bb;
+  font-weight: 700;
+}
+
+/* Mensajes */
+.mensaje {
+  padding: 12px 18px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-weight: 500;
+  white-space: pre-line;
+  flex-shrink: 0;
+}
+
+.mensaje.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.mensaje.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Contenedor de tabla con scroll */
+.tabla-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  background-color: #fff;
+  min-height: 0;
+}
+
+/* Tabla */
+.tabla-usuarios {
+  width: 100%;
+  min-width: 200px;
+  border-collapse: collapse;
+}
+
+.tabla-usuarios thead {
+  background-color: #0e99bb;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.tabla-usuarios th {
+  padding: 12px 15px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tabla-usuarios td {
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Centrar columnas específicas: Rol ID (columna 4) y Contraseña Cambiada (columna 5) */
+.tabla-usuarios td:nth-child(4),
+.tabla-usuarios td:nth-child(5) {
+  text-align: center;
+}
+
+.tabla-usuarios tbody tr:hover {
+  background-color: #f1f5f8;
+  transition: 0.2s ease;
+}
+
+.tabla-usuarios tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Botón resetear */
+.btn-resetear {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  background-color: #e74c3c;
+  transition: all 0.2s ease;
+}
+
+.btn-resetear:hover:not(:disabled) {
+  background-color: #c0392b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+.btn-resetear:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Sin datos */
+.sin-datos {
+  text-align: center;
+  padding: 40px;
+  color: #607d8b;
+  font-style: italic;
+  font-size: 15px;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #34495e;
+  font-size: 16px;
+  font-weight: 500;
+}
+

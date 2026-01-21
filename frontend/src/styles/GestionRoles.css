@@ -1,0 +1,263 @@
+/* Contenedor principal */
+.gestion-roles-container {
+  width: 95%;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px 25px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.gestion-roles-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.gestion-roles-header h1 {
+  color: #0d47a1;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.btn-nuevo-rol {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  background-color: #27ae60;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-nuevo-rol:hover {
+  background-color: #1e8449;
+}
+
+/* Contenedor de tabla con scroll */
+.roles-table-container {
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: auto;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  background-color: #fff;
+  margin-bottom: 15px;
+}
+
+/* Tabla */
+.roles-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+}
+
+.roles-table thead {
+  background-color: #0e99bb;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.roles-table th,
+.roles-table td {
+  padding: 12px 15px;
+  text-align: center;
+  font-size: 14px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.roles-table th {
+  font-weight: 700;
+}
+
+.roles-table tbody tr:hover {
+  background-color: #f1f5f8;
+  transition: 0.2s ease;
+}
+
+.roles-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Botones de acciones */
+.roles-acciones {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.roles-acciones button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-ver-permisos {
+  background-color: #1a8ba7;
+}
+
+.btn-ver-permisos:hover {
+  background-color: #117b9b;
+}
+
+.btn-eliminar-rol {
+  background-color: #e74c3c;
+}
+
+.btn-eliminar-rol:hover {
+  background-color: #c0392b;
+}
+
+/* Estado vacío */
+.sin-roles {
+  text-align: center;
+  padding: 40px;
+  color: #607d8b;
+  font-style: italic;
+}
+
+/* Loading */
+.cargando-roles {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 15px;
+}
+
+.modal-header h2 {
+  color: #2c3e50;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.btn-cerrar-modal {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.btn-cerrar-modal:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.modal-permisos-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.modal-permisos-list li {
+  padding: 10px;
+  margin-bottom: 8px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #0e99bb;
+}
+
+.modal-footer {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 2px solid #e0e0e0;
+  text-align: right;
+}
+
+.btn-cerrar {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  background-color: #0e99bb;
+  transition: all 0.2s ease;
+}
+
+.btn-cerrar:hover {
+  background-color: #117b9b;
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+  .gestion-roles-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .btn-nuevo-rol {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .roles-acciones {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+

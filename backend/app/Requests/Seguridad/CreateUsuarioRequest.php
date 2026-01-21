@@ -17,7 +17,7 @@ class CreateUsuarioRequest extends FormRequest
             'tipo' => 'required|in:empleado,cliente',
 
             // Común
-            'email' => 'required|email|unique:usuarios,email',
+            'email' => 'required|email', // Email único: un usuario = un email (validación en servicio)
             'rolID' => 'required|integer',
 
             // Campos para EMPLEADO

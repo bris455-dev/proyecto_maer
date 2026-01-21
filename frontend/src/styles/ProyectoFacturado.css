@@ -7,8 +7,6 @@
   color: #1f2937;
   background-color: #f1f5f9;
   border-radius: 12px;
-  max-height: 90vh; /* Altura máxima de la ventana */
-  overflow-y: auto; /* Scroll vertical para todo el contenido */
 }
 
 /* Header */
@@ -151,47 +149,172 @@
 
 /* Contenedor de tabla con scroll vertical */
 .tabla-facturacion-container {
-  max-height: 350px; /* Altura fija */
-  overflow-y: auto;
-  margin-top: 20px;
+  margin-top: 30px;
   background-color: #ffffff;
   border-radius: 12px;
-  padding: 15px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+  padding: 25px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.tabla-titulo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tabla-wrapper {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
 }
 
 /* Tabla */
 .tabla-facturacion {
   width: 100%;
   border-collapse: collapse;
+  background-color: #ffffff;
+  font-size: 0.95rem;
 }
 
-.tabla-facturacion th,
-.tabla-facturacion td {
-  padding: 10px;
-  text-align: center;
-  font-size: 0.9rem;
+.tabla-facturacion thead {
+  background-color: #0e99bb;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .tabla-facturacion th {
-  background-color: #1d89b7;
+  background-color: #0e99bb;
   color: #fff;
-  font-weight: 600;
-  border-radius: 6px 6px 0 0;
+  font-weight: 700;
+  padding: 14px 12px;
+  text-align: center;
+  border: none;
+}
+
+.tabla-facturacion td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+}
+
+.tabla-facturacion td:last-child {
+  border-right: none;
+}
+
+.tabla-facturacion tbody tr {
+  transition: background-color 0.2s ease;
 }
 
 .tabla-facturacion tbody tr:nth-child(even) {
-  background-color: #f1f5f9;
+  background-color: #f8fafc;
 }
 
 .tabla-facturacion tbody tr:hover {
   background-color: #e0f2fe;
-  transition: background-color 0.2s;
+  transform: scale(1.01);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.tabla-facturacion tfoot tr td {
+.tabla-facturacion .sin-datos {
+  text-align: center;
+  padding: 30px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Celdas específicas */
+.pieza-cell {
   font-weight: 600;
+  color: #1e40af;
+}
+
+.tratamiento-cell {
+  text-align: left;
+  padding-left: 15px;
+}
+
+.precio-cell,
+.subtotal-cell,
+.comision-cell {
+  font-weight: 500;
+  color: #059669;
+}
+
+/* Footer de la tabla */
+.tabla-facturacion tfoot {
   background-color: #f9fafb;
+  border-top: 2px solid #e5e7eb;
+}
+
+.tabla-facturacion tfoot tr {
+  border-bottom: none;
+}
+
+.tabla-facturacion tfoot .label-total,
+.tabla-facturacion tfoot .label-comision,
+.tabla-facturacion tfoot .label-total-final {
+  text-align: right;
+  padding-right: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.tabla-facturacion tfoot .valor-total {
+  font-weight: 700;
+  color: #059669;
+  font-size: 1.05rem;
+}
+
+.fila-subtotal {
+  background-color: #f0f9ff;
+}
+
+.fila-subtotal .valor-total {
+  color: #059669;
+}
+
+.fila-comision {
+  background-color: #fef3c7;
+}
+
+.fila-comision .label-comision {
+  color: #92400e;
+}
+
+.fila-comision .valor-comision {
+  color: #d97706;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.fila-total-final {
+  background-color: #0d47a1;
+}
+
+.fila-total-final td {
+  color: #fff !important;
+  background-color: #0d47a1 !important;
+}
+
+.fila-total-final .label-total-final {
+  color: #fff !important;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.fila-total-final .valor-total-final {
+  color: #fff !important;
+  font-size: 1.2rem;
+  font-weight: 700;
 }
 
 /* Responsive */

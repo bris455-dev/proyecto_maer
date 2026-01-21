@@ -135,6 +135,28 @@ export async function resetPassword(email, token, password, password_confirmatio
 }
 
 /**
+ * 🟢 CAMBIAR PERFIL/ROL
+ */
+export async function changeProfile(usuarioRolID) {
+  try {
+    const res = await fetch("/api/auth/change-profile", {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ usuarioRolID }),
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.message || "Error al cambiar el perfil");
+    }
+    return data;
+  } catch (err) {
+    console.error("Change profile failed:", err);
+    throw err;
+  }
+}
+
+/**
  * 🟢 CERRAR SESIÓN
  */
 export async function logoutUser() {

@@ -1,0 +1,261 @@
+/* Contenedor principal */
+.nuevo-rol-container {
+  width: 95%;
+  max-width: 900px;
+  margin: 10px auto;
+  padding: 15px 20px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.nuevo-rol-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.nuevo-rol-header h1 {
+  color: #0d47a1;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.btn-volver {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  background-color: #6c757d;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-volver:hover {
+  background-color: #5a6268;
+}
+
+/* Formulario */
+.nuevo-rol-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nuevo-rol-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 13px;
+  color: #34495e;
+  gap: 4px;
+}
+
+.nuevo-rol-form input[type="text"] {
+  padding: 8px 12px;
+  border: 1px solid #cfd8dc;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nuevo-rol-form input[type="text"]:focus {
+  outline: none;
+  border-color: #0e99bb;
+  box-shadow: 0 0 0 2px rgba(14, 153, 187, 0.15);
+  background: #fff;
+}
+
+.nuevo-rol-form input[type="text"]::placeholder {
+  color: #95a5a6;
+  font-size: 13px;
+}
+
+/* Sección de permisos */
+.permisos-section {
+  margin-top: 10px;
+}
+
+.permisos-section h3 {
+  color: #0d47a1;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.permisos-container {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px;
+  max-height: 350px;
+  overflow-y: auto;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.permisos-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.permisos-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.permisos-container::-webkit-scrollbar-thumb {
+  background: #0e99bb;
+  border-radius: 4px;
+}
+
+.permisos-container::-webkit-scrollbar-thumb:hover {
+  background: #0b7a94;
+}
+
+.permiso-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 6px 8px;
+  margin-bottom: 1px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #f0f0f0;
+  min-height: 32px;
+}
+
+.permiso-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.permiso-item:hover {
+  background-color: #f1f5f8;
+}
+
+.permiso-texto {
+  grid-column: 1;
+  font-size: 13px;
+  color: #34495e;
+  user-select: none;
+  text-align: left;
+  padding-right: 12px;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+}
+
+.permiso-checkbox {
+  grid-column: 2;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.permiso-item input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  min-height: 14px;
+  cursor: pointer;
+  accent-color: #0e99bb;
+  margin: 0;
+}
+
+.permisos-loading {
+  text-align: center;
+  padding: 20px;
+  color: #95a5a6;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.permisos-empty {
+  text-align: center;
+  padding: 20px;
+  color: #95a5a6;
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* Acciones del formulario */
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 15px;
+  justify-content: flex-end;
+}
+
+.btn-submit {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  background-color: #27ae60;
+  transition: all 0.2s ease;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #1e8449;
+}
+
+.btn-submit:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  background-color: #6c757d;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+  background-color: #5a6268;
+}
+
+/* Mensajes */
+.mensaje {
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-weight: 500;
+  white-space: pre-line;
+  font-size: 13px;
+}
+
+.mensaje.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.mensaje.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+

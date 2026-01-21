@@ -83,8 +83,26 @@ export default function ProyectoFacturado() {
   if (!proyecto) return <p>Proyecto no encontrado</p>;
 
   const detalles = proyecto.detalles || [];
-  const totalProyecto = facturacion?.total || proyecto.total || 0;
-  const comisionDisenador = facturacion?.comision_disenador || facturacion?.comisionDisenador || 0;
+  
+  // Calcular totales basándose en los detalles del proyecto
+  const calcularTotales = () => {
+    let subtotal = 0;
+    detalles.forEach((d) => {
+      const tratamiento = tratamientosDisponibles.find((t) => t.id === d.tratamientoID);
+      const precio = tratamiento?.precio || d.precio || 0;
+      subtotal += precio;
+    });
+    // Comisión del diseñador es 35% del subtotal (como en el reporte general)
+    const comision = Math.round(subtotal * 0.35 * 100) / 100; // Redondear a 2 decimales
+    return { subtotal, comision };
+  };
+
+  const { subtotal, comision } = calcularTotales();
+  
+  // Usar valores del backend si están disponibles, sino calcular localmente
+  const totalProyecto = facturacion?.total_general || subtotal || 0;
+  const comisionDisenador = facturacion?.comision_total || comision || 0;
+  const subtotalCalculado = facturacion?.total_general ? (totalProyecto - comisionDisenador) : subtotal;
 
   const generarReporte = () => setMostrarReporte(true);
 
@@ -120,11 +138,11 @@ export default function ProyectoFacturado() {
       {/* Indicadores dinámicos */}
       <div className="indicadores-dinamicos">
         <div className="indicador-item indicador-total">
-          <strong>Total Proyecto:</strong>
-          <span>{formatearMoneda(totalProyecto)}</span>
+          <strong>Subtotal Proyecto:</strong>
+          <span>{formatearMoneda(subtotalCalculado)}</span>
         </div>
         <div className="indicador-item indicador-comision">
-          <strong>Comisión Diseñador:</strong>
+          <strong>Comisión Diseñador (35%):</strong>
           <span>{formatearMoneda(comisionDisenador)}</span>
         </div>
         <div className="indicador-item indicador-adicional">
@@ -142,51 +160,59 @@ export default function ProyectoFacturado() {
 
       {/* Tabla de Facturación (solo visible después de generar reporte) */}
       {mostrarReporte && (
-        <div className="tabla-facturacion">
-          <table>
-            <thead>
-              <tr>
-                <th>Pieza</th>
-                <th>Tratamiento</th>
-                <th>Precio Unitario</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {detalles.length === 0 ? (
+        <div className="tabla-facturacion-container">
+          <h3 className="tabla-titulo">Detalle de Facturación</h3>
+          <div className="tabla-wrapper">
+            <table className="tabla-facturacion">
+              <thead>
                 <tr>
-                  <td colSpan="4" style={{ textAlign: "center" }}>No hay detalles registrados</td>
+                  <th>Pieza</th>
+                  <th>Tratamiento</th>
+                  <th>Precio Unitario</th>
+                  <th>Subtotal</th>
+                  <th>Comisión Diseñador (35%)</th>
                 </tr>
-              ) : (
-                detalles.map((d, index) => {
-                  const tratamiento = tratamientosDisponibles.find((t) => t.id === d.tratamientoID);
-                  const precio = tratamiento?.precio || d.precio || 10;
-                  return (
-                    <tr key={index}>
-                      <td>{d.pieza}</td>
-                      <td>{tratamiento?.nombre || "Sin tratamiento"}</td>
-                      <td>{formatearMoneda(precio)}</td>
-                      <td>{formatearMoneda(precio)}</td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colSpan="3" className="subtotal">Subtotal:</td>
-                <td>{formatearMoneda(totalProyecto - comisionDisenador)}</td>
-              </tr>
-              <tr>
-                <td colSpan="3">Comisión Diseñador:</td>
-                <td>{formatearMoneda(comisionDisenador)}</td>
-              </tr>
-              <tr className="total-final">
-                <td colSpan="3">Total:</td>
-                <td>{formatearMoneda(totalProyecto)}</td>
-              </tr>
-            </tfoot>
-          </table>
+              </thead>
+              <tbody>
+                {detalles.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="sin-datos">No hay detalles registrados</td>
+                  </tr>
+                ) : (
+                  detalles.map((d, index) => {
+                    const tratamiento = tratamientosDisponibles.find((t) => t.id === d.tratamientoID);
+                    const precio = d.precio || tratamiento?.precio || 0;
+                    // Comisión del diseñador es 35% del precio (como en el reporte general)
+                    const comisionItem = Math.round(precio * 0.35 * 100) / 100;
+                    return (
+                      <tr key={index}>
+                        <td className="pieza-cell">{d.pieza}</td>
+                        <td className="tratamiento-cell">{d.tratamiento?.nombre || tratamiento?.nombre || "Sin tratamiento"}</td>
+                        <td className="precio-cell">{formatearMoneda(precio)}</td>
+                        <td className="subtotal-cell">{formatearMoneda(precio)}</td>
+                        <td className="comision-cell">{formatearMoneda(comisionItem)}</td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+              <tfoot>
+                <tr className="fila-subtotal">
+                  <td colSpan="3" className="label-total">Subtotal (Suma de tratamientos):</td>
+                  <td className="valor-total">{formatearMoneda(subtotalCalculado)}</td>
+                  <td className="valor-total">{formatearMoneda(comisionDisenador)}</td>
+                </tr>
+                <tr className="fila-comision">
+                  <td colSpan="3" className="label-comision">Comisión Total Diseñador (35% del subtotal):</td>
+                  <td colSpan="2" className="valor-comision">{formatearMoneda(comisionDisenador)}</td>
+                </tr>
+                <tr className="fila-total-final">
+                  <td colSpan="3" className="label-total-final">Total Proyecto:</td>
+                  <td colSpan="2" className="valor-total-final">{formatearMoneda(totalProyecto)}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
         </div>
       )}
     </div>

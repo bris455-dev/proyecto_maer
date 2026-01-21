@@ -1,0 +1,409 @@
+.factura-detalle-container {
+  width: 95%;
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  overflow-x: hidden;
+}
+
+.factura-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-volver,
+.btn-export-pdf,
+.btn-print {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-volver {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-volver:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-export-pdf {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: white;
+}
+
+.btn-export-pdf:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.btn-print {
+  background: linear-gradient(135deg, #17a2b8, #138496);
+  color: white;
+}
+
+.btn-print:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+}
+
+.factura-content {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.factura-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #117b9b;
+}
+
+.logo-container {
+  flex: 0 0 auto;
+}
+
+.logo-factura {
+  max-width: 120px;
+  max-height: 80px;
+  object-fit: contain;
+}
+
+.empresa-info {
+  text-align: right;
+  flex: 1;
+}
+
+.empresa-info h1 {
+  margin: 0;
+  color: #117b9b;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.numero-factura {
+  margin: 5px 0 0 0;
+  font-size: 16px;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.factura-info-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.empresa-datos,
+.cliente-datos {
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.empresa-datos h3,
+.cliente-datos h3 {
+  margin-top: 0;
+  color: #117b9b;
+  font-size: 16px;
+  border-bottom: 2px solid #117b9b;
+  padding-bottom: 8px;
+}
+
+.empresa-datos p,
+.cliente-datos p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.proyecto-info-section {
+  margin-bottom: 30px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.proyecto-info-section h3 {
+  margin-top: 0;
+  color: #117b9b;
+  font-size: 16px;
+  border-bottom: 2px solid #117b9b;
+  padding-bottom: 8px;
+}
+
+.proyecto-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.proyecto-grid p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.proyectos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.proyecto-item {
+  padding: 15px;
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.proyecto-item p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.factura-detalles-section {
+  margin-bottom: 30px;
+}
+
+.factura-detalles-section h3 {
+  color: #117b9b;
+  font-size: 16px;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #117b9b;
+  padding-bottom: 8px;
+}
+
+.factura-detalles-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.factura-detalles-table thead {
+  background-color: #117b9b;
+  color: white;
+}
+
+.factura-detalles-table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.factura-detalles-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+}
+
+.factura-detalles-table tbody tr:hover {
+  background-color: #f1f5f8;
+}
+
+.factura-totales-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.totales-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+  margin-left: auto;
+}
+
+.total-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.total-item:last-child {
+  border-bottom: none;
+}
+
+.total-label {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.total-value {
+  font-weight: 600;
+  color: #117b9b;
+  font-size: 14px;
+}
+
+.comision-item .total-label,
+.comision-item .total-value {
+  color: #6c757d;
+}
+
+.total-final {
+  margin-top: 10px;
+  padding-top: 15px;
+  border-top: 2px solid #117b9b;
+}
+
+.total-final .total-label {
+  font-size: 18px;
+  color: #117b9b;
+}
+
+.total-final .total-value {
+  font-size: 18px;
+  color: #117b9b;
+}
+
+.factura-footer {
+  padding-top: 20px;
+  border-top: 2px solid #e0e0e0;
+}
+
+.estado-section {
+  margin-bottom: 15px;
+}
+
+.estado-section p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.estado-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 10px;
+  text-transform: uppercase;
+}
+
+.estado-pendiente {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.estado-emitida {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.estado-pagada {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estado-cancelada {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.observaciones-section {
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.observaciones-section p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #6c757d;
+}
+
+/* Estilos para impresión */
+@media print {
+  .factura-header-actions {
+    display: none;
+  }
+
+  .factura-detalle-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  .factura-content {
+    box-shadow: none;
+    padding: 20px;
+  }
+
+  .btn-volver,
+  .btn-export-pdf,
+  .btn-print {
+    display: none;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .factura-info-section {
+    grid-template-columns: 1fr;
+  }
+
+  .proyecto-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .factura-header-actions {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .totales-grid {
+    max-width: 100%;
+  }
+}
+

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { getClientes, updateCliente, toggleClienteEstado } from "../../api/clientesApi.js";
+import { getClientes, updateCliente, toggleClienteEstado, deleteCliente } from "../../api/clientesApi.js";
 import EditarCliente from "./EditarCliente.jsx";
 import { useAuth } from "../../hooks/useAuth";
+import { FaEdit, FaPowerOff, FaTrash, FaCheck } from "react-icons/fa";
 import "../../styles/clientes.css";
 
 export default function ListadoClientes() {
@@ -97,6 +98,21 @@ export default function ListadoClientes() {
     setTimeout(() => setToast({ message: "", type: "" }), 3500);
   };
 
+  // Eliminar cliente
+  const handleEliminar = async (cliente) => {
+    if (!window.confirm(`¿Está seguro de eliminar al cliente ${cliente.nombre}? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+
+    try {
+      await deleteCliente(cliente.clienteID);
+      setClientes(prev => prev.filter(c => c.clienteID !== cliente.clienteID));
+      showToast("Cliente eliminado correctamente", "success");
+    } catch (err) {
+      showToast(`Error al eliminar el cliente: ${err.message}`, "error");
+    }
+  };
+
   return (
     <div className="clientes-container">
   <h2>Listado de Clientes</h2>
@@ -132,6 +148,7 @@ export default function ListadoClientes() {
               <th>DNI/RUC</th>
               <th>Dirección</th>
               <th>Email</th>
+              <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -143,10 +160,32 @@ export default function ListadoClientes() {
                 <td>{c.dni_ruc}</td>
                 <td>{c.direccion}</td>
                 <td>{c.email}</td>
+                <td>
+                  <span className={`estado-badge ${c.estado === 1 ? 'activo' : 'inactivo'}`}>
+                    {c.estado === 1 ? 'Activo' : 'Inactivo'}
+                  </span>
+                </td>
                 <td className="acciones">
-                  <button onClick={() => handleOpenEditModal(c)} className="btn-editar">Editar</button>
-                  <button onClick={() => handleToggleEstado(c)} className={c.estado === 1 ? "btn-desactivar" : "btn-activar"}>
-                    {c.estado === 1 ? "Desactivar" : "Activar"}
+                  <button 
+                    onClick={() => handleOpenEditModal(c)} 
+                    className="btn-editar" 
+                    title="Editar cliente"
+                  >
+                    <FaEdit />
+                  </button>
+                  <button 
+                    onClick={() => handleToggleEstado(c)} 
+                    className={c.estado === 1 ? "btn-desactivar" : "btn-activar"}
+                    title={c.estado === 1 ? "Desactivar cliente" : "Activar cliente"}
+                  >
+                    {c.estado === 1 ? <FaPowerOff /> : <FaCheck />}
+                  </button>
+                  <button 
+                    onClick={() => handleEliminar(c)} 
+                    className="btn-eliminar"
+                    title="Eliminar cliente"
+                  >
+                    <FaTrash />
                   </button>
                 </td>
               </tr>

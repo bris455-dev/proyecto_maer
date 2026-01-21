@@ -65,21 +65,89 @@
   transition: background-color 0.2s;
 }
 
-/* Botones */
-.baja-usuarios-table button {
-  background: linear-gradient(135deg, #2991cd, #2991cd);
-  color: #fff;
-  border: none;
+/* Badge de estado */
+.estado-badge {
+  display: inline-block;
   padding: 6px 12px;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.25s ease;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.baja-usuarios-table button:hover {
-  background: linear-gradient(135deg, #22a5b9, #78c7ee);
+.estado-badge.activo {
+  background-color: #27ae60;
+  color: #fff;
+}
+
+.estado-badge.desactivado {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+/* Contenedor de acciones */
+.usuarios-acciones {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Botones de acciones */
+.baja-usuarios-table .btn-estado,
+.baja-usuarios-table .btn-eliminar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+  min-width: 36px;
+}
+
+.baja-usuarios-table .btn-estado.activar {
+  background: linear-gradient(135deg, #27ae60, #229954);
+  color: #fff;
+}
+
+.baja-usuarios-table .btn-estado.activar:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.baja-usuarios-table .btn-estado.desactivar {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: #fff;
+}
+
+.baja-usuarios-table .btn-estado.desactivar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.baja-usuarios-table .btn-eliminar {
+  background: linear-gradient(135deg, #c0392b, #a93226);
+  color: #fff;
+}
+
+.baja-usuarios-table .btn-eliminar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(192, 57, 43, 0.3);
+}
+
+.baja-usuarios-table .btn-estado:disabled,
+.baja-usuarios-table .btn-eliminar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Scroll vertical tabla */

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Seguridad;
 
 use App\Http\Controllers\Controller;
 use App\Requests\User\ChangePasswordRequest;
-use App\Requests\User\AdminResetPasswordRequest;
 use App\Services\UserSecurityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -13,11 +12,11 @@ use App\Models\User;
 
 class ChangePasswordController extends Controller
 {
-    protected UserSecurityService $seguridadService;
+    protected UserSecurityService $securityService;
 
-    public function __construct(UserSecurityService $seguridadService)
+    public function __construct(UserSecurityService $securityService)
     {
-        $this->seguridadService = $seguridadService;
+        $this->securityService = $securityService;
     }
 
     /**
@@ -36,7 +35,7 @@ class ChangePasswordController extends Controller
                 ], 400);
             }
 
-            $result = $this->seguridadService->changePassword(
+            $result = $this->securityService->changePassword(
                 $user,
                 $validated['new_password'],
                 $request->ip()
@@ -56,7 +55,6 @@ class ChangePasswordController extends Controller
 
         } catch (\Throwable $e) {
             Log::error('Error en ChangePasswordController@update: ' . $e->getMessage());
-
             return response()->json([
                 'status' => 'error',
                 'message' => 'Error al actualizar la contraseña.',
@@ -67,44 +65,37 @@ class ChangePasswordController extends Controller
 
     /**
      * Resetear contraseña de cualquier usuario (solo rol 1)
+     * Admin puede resetear la contraseña a 'Maer1234$'
      */
-    public function adminReset(AdminResetPasswordRequest $request)
+    public function adminReset(Request $request, $userID)
     {
         try {
-            $validated = $request->validated();
-
-            $user = null;
-
-            if (!empty($validated['email'])) {
-                $user = $this->seguridadService->getUserByEmail($validated['email']);
-            } elseif (!empty($validated['name'])) {
-                $user = $this->seguridadService->searchUsersByName($validated['name'])->first();
-            }
-
-            if (!$user) {
+            if (!is_numeric($userID)) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Usuario no encontrado.',
-                ], 404);
+                    'message' => 'ID de usuario inválido.',
+                ], 400);
             }
 
-            $result = $this->seguridadService->resetPasswordToDefault($user, $request->ip());
+            $result = $this->securityService->resetPasswordToGenericById((int)$userID, $request->ip());
 
             if (!$result['success']) {
+                $statusCode = $result['code'] ?? 400;
                 return response()->json([
                     'status' => 'error',
                     'message' => $result['message'],
-                ], 400);
+                ], $statusCode);
             }
 
             return response()->json([
                 'status' => 'success',
-                'message' => "Contraseña restablecida correctamente a 12345678 para {$user->email}.",
+                'message' => $result['message'],
+                'user_id' => $result['user_id'],
+                'default_password' => $result['default_password']
             ], 200);
 
         } catch (\Throwable $e) {
             Log::error('Error en ChangePasswordController@adminReset: ' . $e->getMessage());
-
             return response()->json([
                 'status' => 'error',
                 'message' => 'Error al restablecer la contraseña.',
@@ -115,6 +106,7 @@ class ChangePasswordController extends Controller
 
     /**
      * Buscar usuarios por nombre (solo rol 1)
+     * Devuelve datos limitados para la tabla de administración
      */
     public function searchUsersByName(Request $request)
     {
@@ -124,11 +116,10 @@ class ChangePasswordController extends Controller
             ]);
 
             $name = $request->query('name');
+            $usuarios = $this->securityService->searchUsersByName($name);
 
-            $usuarios = $this->seguridadService->searchUsersByName($name);
-
-            // Bitácora
-            $this->seguridadService->registrarBusqueda(
+            // Registrar búsqueda en bitácora
+            $this->securityService->registrarBusqueda(
                 $request->user(),
                 "El usuario buscó: {$name}",
                 $request->ip()
@@ -141,10 +132,39 @@ class ChangePasswordController extends Controller
 
         } catch (\Throwable $e) {
             Log::error("Error en ChangePasswordController@searchUsersByName: " . $e->getMessage());
-
             return response()->json([
                 'status' => 'error',
                 'message' => 'Error al realizar la búsqueda.',
+                'error' => env('APP_DEBUG') ? $e->getMessage() : null,
+            ], 500);
+        }
+    }
+
+    /**
+     * Obtener la información del usuario autenticado para gestión de su propia contraseña
+     */
+    public function getOwnUserForReset(Request $request)
+    {
+        try {
+            $user = $request->user();
+
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Usuario no autenticado.',
+                ], 401);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [$user->only(['id', 'nombre', 'email', 'rolID', 'is_locked', 'password_changed'])]
+            ]);
+
+        } catch (\Throwable $e) {
+            Log::error("Error en ChangePasswordController@getOwnUserForReset: " . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error al obtener la información del usuario.',
                 'error' => env('APP_DEBUG') ? $e->getMessage() : null,
             ], 500);
         }

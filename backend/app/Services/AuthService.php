@@ -75,6 +75,24 @@ class AuthService
 
             // $this->bitacoraService->registrar($user, 'Inicio de sesión con MFA verificado', 'Seguridad', $ip);
 
+            // Obtener todos los roles/perfiles activos del usuario
+            $rolesDisponibles = \DB::table('usuario_roles as ur')
+                ->join('rol as r', 'ur.rolID', '=', 'r.rolID')
+                ->where('ur.usuarioID', $user->id)
+                ->where('ur.activo', true)
+                ->select('ur.id as usuarioRolID', 'ur.rolID', 'r.nombreRol', 'ur.empleadoID', 'ur.clienteID')
+                ->get()
+                ->map(function($rol) {
+                    return [
+                        'usuarioRolID' => $rol->usuarioRolID,
+                        'rolID' => $rol->rolID,
+                        'nombreRol' => $rol->nombreRol,
+                        'empleadoID' => $rol->empleadoID,
+                        'clienteID' => $rol->clienteID,
+                    ];
+                })
+                ->toArray();
+
             return [
                 'success' => true,
                 'message' => 'Inicio de sesión exitoso.',
@@ -82,7 +100,8 @@ class AuthService
                     'id'     => $user->id,
                     'nombre' => $user->nombre,
                     'email'  => $user->email,
-                    'rolID'  => $user->rolID,
+                    'rolID'  => $user->rolID ?? ($rolesDisponibles[0]['rolID'] ?? null),
+                    'rolesDisponibles' => $rolesDisponibles, // 🔑 Todos los roles/perfiles disponibles
                 ],
                 'token'   => $token,
             ];

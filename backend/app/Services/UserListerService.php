@@ -33,4 +33,21 @@ class UserListerService
             return null;
         }
     }
+
+    /**
+     * Obtener usuarios por rol.
+     */
+    public function getUsersByRol(int $rolID): array
+    {
+        try {
+            return User::with('rol')
+                ->where('rolID', $rolID)
+                ->whereNotNull('empleadoID')
+                ->get()
+                ->toArray();
+        } catch (\Throwable $e) {
+            Log::error("❌ Error al obtener usuarios por rol {$rolID}: " . $e->getMessage());
+            return [];
+        }
+    }
 }

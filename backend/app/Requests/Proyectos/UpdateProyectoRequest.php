@@ -23,13 +23,31 @@ class UpdateProyectoRequest extends FormRequest
             'fecha_entrega' => 'sometimes|nullable|date',
             'notas' => 'sometimes|nullable|string',
             'estado' => 'sometimes|nullable|integer',
+            'tipificacion' => 'sometimes|nullable|string|in:Pendiente,En Proceso,En HTML,Observado,Devuelto,Aprobado',
+            'nueva_nota' => 'sometimes|nullable|string',
+            'archivos_nota' => 'sometimes|nullable|array',
             'detalles' => 'sometimes|nullable|array',
             'detalles.*.pieza' => 'required_with:detalles|string',
             'detalles.*.tratamientoID' => 'required_with:detalles|integer|exists:tratamiento,tratamientoID',
             'detalles.*.precio' => 'nullable|numeric',
             'detalles.*.color' => 'nullable|string|max:50',
             'images' => 'sometimes|nullable|array',          // ahora no obligatorio
-            'images.*' => 'nullable|file|mimes:jpg,jpeg,png', // valida solo si se envían
+            'images.*' => 'nullable|file|max:10240', // acepta cualquier tipo de archivo, máximo 10MB
         ];
+    }
+    
+    protected function prepareForValidation()
+    {
+        // Si viene data como JSON string en FormData, parsearlo
+        if ($this->has('data') && is_string($this->input('data'))) {
+            $data = json_decode($this->input('data'), true);
+            if (is_array($data)) {
+                \Log::info("📋 UpdateProyectoRequest - Parseando FormData. nueva_nota: " . ($data['nueva_nota'] ?? 'NO EXISTE'));
+                $this->merge($data);
+            }
+        } else {
+            // Si viene como JSON normal, también loguear
+            \Log::info("📋 UpdateProyectoRequest - Datos JSON normales. nueva_nota: " . ($this->input('nueva_nota') ?? 'NO EXISTE'));
+        }
     }
 }

@@ -1,0 +1,871 @@
+/* Estilos para Catálogo - Diseño Profesional Completo */
+.estudiante-catalogo {
+  padding: 32px;
+  max-width: 1600px;
+  margin: 0 auto;
+  min-height: 100%;
+  width: 100%;
+}
+
+/* 1. Encabezado y Barra de Búsqueda Destacada */
+.catalogo-header-section {
+  margin-bottom: 32px;
+}
+
+.catalogo-header {
+  margin-bottom: 24px;
+}
+
+.catalogo-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  transition: color 0.3s ease;
+}
+
+.catalogo-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.search-bar-destacada {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.search-bar-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.search-icon-large {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  font-size: 20px;
+  transition: color 0.3s ease;
+}
+
+.search-input-large {
+  width: 100%;
+  padding: 16px 20px 16px 56px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 16px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.search-input-large:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.categorias-sugeridas {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sugerencias-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.sugerencias-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag-sugerencia {
+  padding: 6px 16px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tag-sugerencia:hover {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Layout principal: Filtros + Resultados */
+.catalogo-main-content {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* 2. Panel Lateral de Filtros */
+.filtros-sidebar {
+  width: 280px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.filtros-sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.filtros-sidebar-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.cerrar-filtros-sidebar {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: none; /* Oculto en desktop, visible en móvil */
+}
+
+.cerrar-filtros-sidebar:hover {
+  background: var(--card-hover);
+  color: var(--text-primary);
+}
+
+.filtros-sidebar-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.filtro-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filtro-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+.filtro-group input[type="text"],
+.filtro-group input[type="number"],
+.filtro-group select {
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  transition: all 0.2s ease;
+}
+
+.filtro-group input:focus,
+.filtro-group select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.precio-filtros {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.precio-filtros input {
+  flex: 1;
+}
+
+.precio-filtros span {
+  color: var(--text-secondary);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--accent-color);
+}
+
+.filtros-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.aplicar-filtros-btn,
+.limpiar-filtros-btn {
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.aplicar-filtros-btn {
+  background: linear-gradient(135deg, #117b9b 0%, #0e6a85 100%);
+  color: white;
+}
+
+.aplicar-filtros-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.limpiar-filtros-btn {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.limpiar-filtros-btn:hover {
+  background: var(--card-hover);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+/* 3. Área de Resultados */
+.catalogo-resultados {
+  flex: 1;
+  min-width: 0;
+}
+
+.resultados-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.resultados-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.contador-resultados {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.resultados-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ordenar-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0 12px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.sort-icon {
+  color: var(--text-secondary);
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.ordenar-select {
+  border: none;
+  padding: 10px 8px;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  transition: color 0.3s ease;
+}
+
+.vista-btn,
+.filtros-toggle-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.vista-btn:hover,
+.filtros-toggle-btn:hover {
+  background: var(--card-hover);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.vista-btn.active {
+  background: linear-gradient(135deg, #117b9b 0%, #0e6a85 100%);
+  border-color: #117b9b;
+  color: white;
+}
+
+.filtros-toggle-btn {
+  display: none; /* Oculto en desktop, visible en móvil */
+}
+
+/* Contenedor de cursos */
+.cursos-container {
+  display: grid;
+  gap: 24px;
+}
+
+.cursos-container.grid-view {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+.cursos-container.list-view {
+  grid-template-columns: 1fr;
+}
+
+/* Tarjeta de curso mejorada */
+.curso-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+}
+
+.curso-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  background-color: var(--card-hover);
+}
+
+.curso-card.grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.curso-card.list {
+  display: flex;
+  flex-direction: row;
+}
+
+.curso-imagen {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: var(--bg-tertiary);
+  transition: background-color 0.3s ease;
+}
+
+.curso-card.list .curso-imagen {
+  width: 300px;
+  height: 200px;
+  flex-shrink: 0;
+}
+
+.curso-imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lista-deseos-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.lista-deseos-btn:hover {
+  background: white;
+  color: #ef4444;
+  transform: scale(1.1);
+}
+
+.curso-content {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.curso-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.curso-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  flex: 1;
+  transition: color 0.3s ease;
+}
+
+.curso-nivel {
+  background: linear-gradient(135deg, #117b9b 0%, #0e6a85 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Instructor */
+.curso-instructor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.instructor-icon {
+  color: var(--accent-color);
+  font-size: 14px;
+}
+
+/* Calificación */
+.curso-calificacion-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.curso-calificacion {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.estrellas {
+  display: flex;
+  gap: 2px;
+}
+
+.estrellas .estrella-llena {
+  color: #fbbf24;
+  font-size: 14px;
+}
+
+.estrellas .estrella-media {
+  color: #fbbf24;
+  font-size: 14px;
+  opacity: 0.5;
+}
+
+.estrellas .estrella-vacia {
+  color: var(--border-color);
+  font-size: 14px;
+}
+
+.calificacion-numero {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+.numero-resenas {
+  font-size: 12px;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.curso-descripcion {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.3s ease;
+}
+
+.curso-card.list .curso-descripcion {
+  -webkit-line-clamp: 3;
+}
+
+.curso-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.curso-duracion {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.curso-duracion svg {
+  color: var(--accent-color);
+}
+
+.curso-precio {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--success-color);
+  transition: color 0.3s ease;
+}
+
+.precio-gratis {
+  color: var(--success-color);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Certificación */
+.curso-certificacion {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--success-color);
+  font-weight: 500;
+}
+
+.curso-certificacion svg {
+  font-size: 14px;
+}
+
+/* Botones de acción */
+.curso-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.curso-card.list .curso-acciones {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.curso-acciones button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-ver-detalles {
+  background: var(--bg-primary);
+  color: var(--accent-color);
+  border: 1px solid var(--border-color);
+}
+
+.btn-ver-detalles:hover {
+  background: var(--card-hover);
+  border-color: var(--accent-color);
+}
+
+.btn-agregar-carrito {
+  background: var(--card-bg);
+  color: var(--accent-color);
+  border: 1px solid var(--accent-color);
+}
+
+.btn-agregar-carrito:hover {
+  background: var(--accent-color);
+  color: white;
+}
+
+.btn-inscribirse {
+  background: linear-gradient(135deg, #117b9b 0%, #0e6a85 100%);
+  color: white;
+}
+
+.btn-inscribirse:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.btn-inscribirse.btn-primary {
+  order: -1;
+  flex: 1;
+}
+
+/* Paginación */
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+.paginacion-btn {
+  padding: 10px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.paginacion-btn:hover:not(:disabled) {
+  background: var(--card-hover);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.paginacion-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.paginacion-numeros {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.paginacion-numero {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.paginacion-numero:hover {
+  background: var(--card-hover);
+  border-color: var(--accent-color);
+}
+
+.paginacion-numero.active {
+  background: linear-gradient(135deg, #117b9b 0%, #0e6a85 100%);
+  border-color: #117b9b;
+  color: white;
+}
+
+.paginacion-ellipsis {
+  padding: 0 8px;
+  color: var(--text-secondary);
+}
+
+/* Estado vacío */
+.no-cursos {
+  text-align: center;
+  padding: 64px 32px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.no-cursos p {
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+
+.catalogo-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  font-size: 18px;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+/* Scrollbar para sidebar de filtros */
+.filtros-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filtros-sidebar::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+.filtros-sidebar::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.filtros-sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .catalogo-main-content {
+    flex-direction: column;
+  }
+
+  .filtros-sidebar {
+    width: 100%;
+    position: relative;
+    top: 0;
+    max-height: none;
+    display: none;
+  }
+
+  .filtros-sidebar.abierto {
+    display: block;
+  }
+
+  .filtros-toggle-btn {
+    display: flex;
+  }
+
+  .cerrar-filtros-sidebar {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  .estudiante-catalogo {
+    padding: 20px;
+  }
+
+  .catalogo-header {
+    margin-bottom: 20px;
+  }
+
+  .search-bar-destacada {
+    padding: 20px;
+  }
+
+  .categorias-sugeridas {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .resultados-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .resultados-controls {
+    flex-wrap: wrap;
+  }
+
+  .cursos-container.grid-view {
+    grid-template-columns: 1fr;
+  }
+
+  .curso-card.list {
+    flex-direction: column;
+  }
+
+  .curso-card.list .curso-imagen {
+    width: 100%;
+  }
+
+  .curso-acciones {
+    flex-direction: column;
+  }
+
+  .paginacion {
+    flex-wrap: wrap;
+  }
+}

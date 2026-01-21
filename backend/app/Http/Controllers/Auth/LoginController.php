@@ -31,7 +31,15 @@ class LoginController extends Controller
         $user = null;
 
         try {
+            // Buscar usuario por email (ahora es único)
             $user = User::where('email', $validated['email'])->first();
+            
+            // Log para debugging
+            Log::info('LoginController - Intentando login', [
+                'email' => $validated['email'],
+                'user_found' => $user ? $user->id : null,
+                'password_check' => $user ? Hash::check($validated['password'], $user->password) : false,
+            ]);
 
             // 1. Usuario no encontrado o contraseña incorrecta
             if (!$user || !Hash::check($validated['password'], $user->password)) {
@@ -65,30 +73,55 @@ class LoginController extends Controller
                 ], 403);
             }
 
-            // 3. Login exitoso: Reiniciar intentos y obtener permisos
+            // 3. Login exitoso: Reiniciar intentos y obtener roles disponibles
             $user->failed_attempts = 0;
             $user->is_locked = 0;
             $user->lock_expires_at = null;
             $user->save();
 
-            $permisos = DB::table('rolpermiso as rp')
-                ->join('permiso as p', 'rp.permisoID', '=', 'p.permisoID')
-                ->where('rp.rolID', $user->rolID)
-                ->select('p.nombreModulo', 'p.nombreSubmodulo')
-                ->get();
+            // Obtener todos los roles/perfiles activos del usuario
+            $rolesDisponibles = DB::table('usuario_roles as ur')
+                ->join('rol as r', 'ur.rolID', '=', 'r.rolID')
+                ->where('ur.usuarioID', $user->id)
+                ->where('ur.activo', true)
+                ->select('ur.id as usuarioRolID', 'ur.rolID', 'r.nombreRol', 'ur.empleadoID', 'ur.clienteID')
+                ->get()
+                ->map(function($rol) {
+                    return [
+                        'usuarioRolID' => $rol->usuarioRolID,
+                        'rolID' => $rol->rolID,
+                        'nombreRol' => $rol->nombreRol,
+                        'empleadoID' => $rol->empleadoID,
+                        'clienteID' => $rol->clienteID,
+                    ];
+                })
+                ->toArray();
 
-            $permissions = $permisos->map(fn($p) => [
-                'nombreModulo'      => $p->nombreModulo,
-                'nombreSubmodulo'   => $p->nombreSubmodulo
-            ])->toArray();
+            // Obtener permisos del rol principal (o el primero si no hay principal)
+            $rolIDParaPermisos = $user->rolID ?? ($rolesDisponibles[0]['rolID'] ?? null);
+            
+            $permisos = [];
+            if ($rolIDParaPermisos) {
+                $permisos = DB::table('rolpermiso as rp')
+                    ->join('permiso as p', 'rp.permisoID', '=', 'p.permisoID')
+                    ->where('rp.rolID', $rolIDParaPermisos)
+                    ->select('p.nombreModulo', 'p.nombreSubmodulo')
+                    ->get()
+                    ->map(fn($p) => [
+                        'nombreModulo'      => $p->nombreModulo,
+                        'nombreSubmodulo'   => $p->nombreSubmodulo
+                    ])
+                    ->toArray();
+            }
 
             $userData = [
                 'id'                => $user->id,
                 'nombre'            => $user->nombre,
                 'email'             => $user->email,
                 'password_changed'  => $user->password_changed,
-                'rolID'             => $user->rolID,
-                'permissions'       => $permissions // 🔑 Permisos incluidos
+                'rolID'             => $user->rolID ?? ($rolesDisponibles[0]['rolID'] ?? null),
+                'rolesDisponibles'  => $rolesDisponibles, // 🔑 Todos los roles/perfiles disponibles
+                'permissions'       => $permisos // 🔑 Permisos del rol actual
             ];
 
             // 4. Primer inicio de sesión

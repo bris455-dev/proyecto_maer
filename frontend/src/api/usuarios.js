@@ -1,5 +1,8 @@
 const API_URL = "http://localhost:8080/api/usuarios";
 
+// 🔥 Ruta correcta para crear usuario (POST)
+const API_CREAR = "http://localhost:8080/api/CrearUsuarios";
+
 // 🔹 Obtener token
 function getToken() {
   return localStorage.getItem("auth_token") || "";
@@ -25,10 +28,21 @@ async function handleFetch(url, options = {}) {
     data = {};
   }
   if (!res.ok) {
-    const errorMessage = data.message || `Error ${res.status}: ${res.statusText}`;
+    // Extraer mensaje de error más específico
+    let errorMessage = data.message || `Error ${res.status}: ${res.statusText}`;
+    
+    // Si hay errores de validación (422), extraer el primer mensaje
+    if (res.status === 422 && data.errors) {
+      const errorMessages = Object.values(data.errors).flat();
+      if (errorMessages.length > 0) {
+        errorMessage = errorMessages[0]; // Tomar el primer mensaje de error
+      }
+    }
+    
     const error = new Error(errorMessage);
     error.status = res.status;
     error.data = data;
+    error.errors = data.errors; // Incluir errores de validación
     throw error;
   }
   return data;
@@ -36,7 +50,7 @@ async function handleFetch(url, options = {}) {
 
 // 🔹 Crear usuario
 export async function crearUsuario(usuario) {
-  return handleFetch(`${API_URL}`, {
+  return handleFetch(`${API_CREAR}`, {
     method: "POST",
     headers: getHeaders(),
     body: JSON.stringify(usuario),
@@ -61,16 +75,45 @@ export async function getUsuarios() {
 }
 
 // 🔹 Alternar estado de usuario
-export async function toggleUsuarioEstado(id) {
-  // Nuevo valor: si está bloqueado (1) => desbloquear (0), si no => bloquear (1)
-  const nuevoEstado = id.is_locked === 1 ? 0 : 1;
+export async function toggleUsuarioEstado(usuario) {
+  // Enviar true si estaba bloqueado, false si estaba activo
+  const activar = usuario.is_locked ? true : false;
 
-  return handleFetch(`${API_URL}/${id}/toggle-estado`, {
+  return handleFetch(`${API_URL}/${usuario.id}/toggle-estado`, {
     method: "PATCH",
     headers: getHeaders(),
-    body: JSON.stringify({ is_locked: nuevoEstado }),
+    body: JSON.stringify({ activar }),
   });
 }
 
+// 🔹 Obtener roles
+export async function obtenerRoles() {
+  return handleFetch("http://localhost:8080/api/roles", {
+    method: "GET",
+    headers: getHeaders(),
+  });
+}
 
+// 🔹 Obtener usuarios para restablecer contraseña
+export async function getUsuariosParaReset() {
+  return handleFetch("http://localhost:8080/api/admin/reset-password/users", {
+    method: "GET",
+    headers: getHeaders(),
+  });
+}
 
+// 🔹 Resetear contraseña de un usuario
+export async function resetearContrasena(userID) {
+  return handleFetch(`http://localhost:8080/api/admin/reset-password/${userID}`, {
+    method: "POST",
+    headers: getHeaders(),
+  });
+}
+
+// 🔹 Eliminar usuario
+export async function eliminarUsuario(id) {
+  return handleFetch(`${API_URL}/${id}`, {
+    method: "DELETE",
+    headers: getHeaders(),
+  });
+}

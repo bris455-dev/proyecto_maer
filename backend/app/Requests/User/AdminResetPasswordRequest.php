@@ -3,13 +3,14 @@
 namespace App\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Helpers\RoleHelper;
 
 class AdminResetPasswordRequest extends FormRequest
 {
     public function authorize(): bool
     {
         $user = $this->user();
-        return $user && $user->rolID === 1; // Solo administradores
+        return $user && RoleHelper::isAdmin($user); // Solo administradores
     }
 
     public function rules(): array

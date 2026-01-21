@@ -55,14 +55,17 @@ class ResetPasswordController extends Controller
             // 1. Actualizar contraseña
             $user->password = Hash::make($request->password);
             
-            // 2. Limpiar/Eliminar el token usado
+            // 2. Marcar que la contraseña ha sido cambiada
+            $user->password_changed = 1;
+            
+            // 3. Limpiar/Eliminar el token usado
             $user->password_reset_token = null;
             $user->password_reset_expires_at = null;
             $user->save();
 
             // 3. Registrar acción en bitácora (Normalización de campos)
             Bitacora::create([
-                'usuario_id' => $user->id, // Usamos usuario_id para consistencia
+                'user_id' => $user->id, // Usamos usuario_id para consistencia
                 'accion' => 'Restablecimiento de contraseña',
                 'descripcion' => 'El usuario restableció su contraseña mediante el sistema de recuperación.', // Usamos descripcion
                 'ip' => $request->ip(),

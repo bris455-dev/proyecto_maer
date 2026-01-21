@@ -1,51 +1,36 @@
 /* CONTENEDOR */
 .odontograma {
-    padding: 20px;
+    padding: 10px;
     background: #fafafa;
     border-radius: 12px;
     border: 1px solid #e0e0e0;
-
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
-}
-
-/* --------------------------------------- */
-/*             ODONTOGRAMA BASE            */
-/* --------------------------------------- */
-
-.odontograma-seccion {
-    margin-top: 40px;
-    padding: 20px;
-    background: #fcfcfc;
-    border-radius: 10px;
-    border: 1px solid #eee;
-}
-
-.odontograma {
-    padding: 20px;
-    background: #fafafa;
-    border-radius: 12px;
-    border: 1px solid #e0e0e0;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
 }
 
 .odontograma h3 {
     text-align: center;
     margin-bottom: 15px;
     color: #0d47a1;
+    width: 100%;
 }
 
-/* GRID PRINCIPAL CORREGIDO */
+/* GRID PRINCIPAL */
 .odontograma-grid {
     display: flex;
     flex-direction: column;
     gap: 35px;
     width: 100%;
-    max-width: 850px;
+    max-width: 700px;
     margin: 0 auto;
     position: relative;
-    padding: 10px 0;
+    padding: 0px 0px;
+    box-sizing: border-box;
 }
 
 /* Línea vertical entre cuadrantes perfectamente centrada */
@@ -60,6 +45,7 @@
     opacity: 0.4;
     transform: translateX(-50%);
     border-radius: 2px;
+    z-index: 0;
 }
 
 /* Cada fila de 16 dientes */
@@ -69,6 +55,10 @@
     justify-items: center;
     gap: 12px;
     position: relative;
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+    margin: 0 auto;
 }
 
 /* CONTENEDOR DE PIEZA */
@@ -77,12 +67,15 @@
     flex-direction: column;
     align-items: center;
     gap: 6px;
+    width: 100%;
+    max-width: 60px;
 }
 
 /* DIENTE */
 .pieza-dental {
     aspect-ratio: 1;
-    width: 55px;
+    width: 25px;
+    height: 25px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -93,6 +86,7 @@
     cursor: pointer;
     transition: .3s;
     color: #1f1f1f;
+    font-size: 12px;
 }
 
 /* FORMAS ESPECIALES */
@@ -107,72 +101,29 @@
 /* Hover */
 .pieza-dental:hover {
     box-shadow: 0 0 10px #2c3e50;
+    transform: scale(1.05);
 }
 
-/* TÍTULO */
-.odontograma h3 {
-  text-align: center;
-  margin-bottom: 10px;
-  color: #0d47a1;
-
-  width: 100%;
-}
-
-/* GRID PRINCIPAL */
-.odontograma-grid {
-    max-width: 1000px;
+/* SELECT DE TRATAMIENTO */
+.select-tratamiento {
     width: 100%;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    position: relative;
+    max-width: 60px;
+    padding: 4px 6px;
+    font-size: 10px;
+    border: 1px solid #d0d7dd;
+    border-radius: 4px;
+    background: #f2f4f7;
+    cursor: pointer;
+    text-align: center;
 }
 
-/* LÍNEA CENTRAL */
-.odontograma-grid::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 3px;
-  background: #c7c7c7;
-  opacity: 0.4;
-  border-radius: 2px;
+.select-tratamiento:hover {
+    background: #ffffff;
+    border-color: #90caf9;
 }
 
-/* FILAS DE 16 DIENTES */
-.fila-odonto {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(16, 1fr);
-  gap: 8px;
-  justify-items: center;
-}
-
-/* CONTENEDOR DE DIENTE */
-.pieza-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  width: 55px;
-}
-
-/* DIENTE */
-.pieza-dental {
-  width: 40px;
-  height: 40px;
-  border: 2px solid #2c3e50;
-  background: #e9f0f4;
-  border-radius: 50%;
-  font-weight: bold;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  cursor: pointer;
+.select-tratamiento:focus {
+    outline: none;
+    border-color: #0d47a1;
+    box-shadow: 0 0 0 2px rgba(13, 71, 161, 0.18);
 }

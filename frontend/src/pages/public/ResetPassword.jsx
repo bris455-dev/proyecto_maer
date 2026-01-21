@@ -88,13 +88,13 @@ export default function ResetPassword() {
         localStorage.setItem("auth_token", data.token);
 
         // Guardar user completo
-        if (data.user) localStorage.setItem("user_data", JSON.stringify(data.user));
+        if (data.user) {
+          localStorage.setItem("user_data", JSON.stringify(data.user));
+        }
 
-        // 🔑 login directo en contexto
-        await login(email, password);
-
-        // redirigir a inicio
-        navigate("/inicio", { replace: true });
+        // Recargar la página para que AuthProvider cargue el usuario desde localStorage
+        // Esto asegura que el contexto se actualice correctamente
+        window.location.href = "/inicio";
       } else {
         // Si no retorna token, regresar al login
         navigate("/", { replace: true });

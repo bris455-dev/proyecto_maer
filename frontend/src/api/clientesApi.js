@@ -77,3 +77,11 @@ export async function toggleClienteEstado(id) {
     headers: getHeaders(),
   });
 }
+
+// 🔹 Eliminar cliente
+export async function deleteCliente(id) {
+  return handleFetch(`${API_URL}/${id}`, {
+    method: "DELETE",
+    headers: getHeaders(),
+  });
+}

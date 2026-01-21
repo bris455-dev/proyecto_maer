@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProyectoById } from "../../api/proyectos.js";
 import { getClientes } from "../../api/clientesApi.js";
-import { getClienteNombre, getEmpleadoNombre } from "../../utils/proyectoHelpers";
+import { getClienteNombre, getEmpleadoNombre } from "../../utils/ProyectoHelpers";
+import { useAuth } from "../../hooks/useAuth";
 import "../../styles/proyectos.css";
 import "../../styles/ProyectoDetalle.css";
+import "../../styles/chat.css";
 
 const tratamientosDisponibles = [
   { id: 1, nombre: "Corona", color: "#3498db", precio: 10 },
@@ -71,6 +73,7 @@ const formatFecha = (fecha) => {
 export default function ProyectoDetalle() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [proyecto, setProyecto] = useState(null);
   const [detalles, setDetalles] = useState([]);
@@ -80,10 +83,17 @@ export default function ProyectoDetalle() {
   const [visorActivo, setVisorActivo] = useState(false);
   const [archivoSeleccionado, setArchivoSeleccionado] = useState(null);
 
+  // Verificar roles
+  const esAdmin = user?.rolID === 1;
+  const puedeVerFacturacion = esAdmin;
+
   useEffect(() => {
     let isMounted = true;
+    let hasFetched = false; // Prevenir múltiples llamadas
 
     const fetchData = async () => {
+      if (hasFetched) return; // Si ya se ejecutó, no hacer nada
+      hasFetched = true;
       try {
         const resClientes = await getClientes();
         const listaClientes = Array.isArray(resClientes?.data)
@@ -96,7 +106,8 @@ export default function ProyectoDetalle() {
 
       try {
         const token = localStorage.getItem("auth_token");
-        const respuesta = await fetch("/api/usuarios", {
+        const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
+        const respuesta = await fetch(`${API_BASE}/api/usuarios`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
         const data = await respuesta.json().catch(() => ({}));
@@ -114,6 +125,47 @@ export default function ProyectoDetalle() {
         const respuesta = await getProyectoById(id);
         if (!isMounted) return;
         const proyectoData = respuesta?.data || respuesta?.proyecto || respuesta || {};
+        
+        // Asegurar que historial sea un array
+        if (!Array.isArray(proyectoData.historial)) {
+          proyectoData.historial = [];
+        }
+        
+        // Asegurar que imagenes sea un array
+        if (!Array.isArray(proyectoData.imagenes)) {
+          proyectoData.imagenes = [];
+        }
+        
+        // Debug: verificar historial e imágenes
+        console.log("📋 ProyectoDetalle - Historial recibido:", proyectoData.historial);
+        console.log("📋 ProyectoDetalle - Imágenes recibidas:", proyectoData.imagenes);
+        console.log("📋 ProyectoDetalle - Total historial:", proyectoData.historial?.length || 0);
+        console.log("📋 ProyectoDetalle - Total imágenes:", proyectoData.imagenes?.length || 0);
+        console.log("📋 ProyectoDetalle - Rutas de imágenes:", proyectoData.imagenes);
+        
+        // Verificar si hay imágenes en el historial también
+        if (proyectoData.historial && Array.isArray(proyectoData.historial)) {
+          const imagenesEnHistorial = proyectoData.historial
+            .filter(item => item.archivos && (Array.isArray(item.archivos) || typeof item.archivos === 'string'))
+            .flatMap(item => {
+              const archivos = Array.isArray(item.archivos) ? item.archivos : (typeof item.archivos === 'string' ? JSON.parse(item.archivos) : []);
+              return archivos.map(a => typeof a === 'string' ? a : (a.ruta || a.url || a.path || ''));
+            })
+            .filter(r => r);
+          console.log("📋 ProyectoDetalle - Imágenes en historial:", imagenesEnHistorial);
+        }
+        
+        // Asegurar que notas e images se muestren correctamente
+        if (proyectoData.notas === null || proyectoData.notas === undefined) {
+          proyectoData.notas = '';
+        }
+        if (!Array.isArray(proyectoData.images)) {
+          proyectoData.images = [];
+        }
+        
+        console.log("📋 ProyectoDetalle - Notas del proyecto:", proyectoData.notas);
+        console.log("📋 ProyectoDetalle - Images del proyecto:", proyectoData.images);
+        
         setProyecto(proyectoData);
         setDetalles(mapDetallesDesdeBackend(proyectoData?.detalles || []));
       } catch (err) {
@@ -126,7 +178,10 @@ export default function ProyectoDetalle() {
     };
 
     fetchData();
-    return () => { isMounted = false; };
+    return () => { 
+      isMounted = false;
+      hasFetched = false;
+    };
   }, [id, navigate]);
 
   if (loading) return <p>Cargando proyecto...</p>;
@@ -136,7 +191,11 @@ export default function ProyectoDetalle() {
   const getArchivoUrl = (ruta) => {
     if (!ruta) return null;
     if (ruta.startsWith("http")) return ruta;
+    // Si la ruta ya incluye /storage/, usar directamente
+    if (ruta.startsWith("/storage/")) return `${API_BASE_URL}${ruta}`;
+    // Si empieza con /, agregar al API_BASE_URL
     if (ruta.startsWith("/")) return `${API_BASE_URL}${ruta}`;
+    // Si es una ruta relativa (ej: proyectos/8/archivo.jpg), construir la URL completa
     return `${API_BASE_URL}/storage/${ruta}`;
   };
 
@@ -158,7 +217,9 @@ export default function ProyectoDetalle() {
         <h2>Detalle del Proyecto</h2>
         <div className="proyecto-detalle-acciones">
           <button className="btn-editar" onClick={() => navigate(`/proyectos/editar/${id}`)}>Editar</button>
-          <button className="btn-facturacion" onClick={() => navigate(`/proyectos/facturado/${id}`)}>Ver Facturación</button>
+          {puedeVerFacturacion && (
+            <button className="btn-facturacion" onClick={() => navigate(`/proyectos/facturado/${id}`)}>Ver Facturación</button>
+          )}
         </div>
       </div>
 
@@ -186,7 +247,7 @@ export default function ProyectoDetalle() {
             },
             { label: "Fecha Inicio", value: formatFecha(proyecto.fecha_inicio) },
             { label: "Fecha Límite", value: formatFecha(proyecto.fecha_entrega || proyecto.fecha_fin) },
-            { label: "Estado", value: proyecto.estado === 1 ? "Activo" : proyecto.estado === 0 ? "Completado" : "Desconocido" },
+            { label: "Tipificación", value: proyecto.tipificacion || "Pendiente" },
           ].map((dato, idx) => (
             <label key={idx}>
               {dato.label}:
@@ -194,35 +255,141 @@ export default function ProyectoDetalle() {
             </label>
           ))}
 
-          <label>
-            Notas u observaciones:
-            <textarea value={proyecto.notas || ""} readOnly />
-          </label>
-
-          {imagenes.length > 0 && (
-            <div className="imagenes-existentes">
-              <h3>Archivos Adjuntos</h3>
-              <div className="imagenes-grid">
-                {imagenes.map((ruta, idx) => {
-                  const archivoUrl = getArchivoUrl(ruta);
-                  const nombreArchivo = ruta.split("/").pop() || `archivo-${idx + 1}`;
-                  const esImagen = /\.(jpg|jpeg|png|gif)$/i.test(nombreArchivo);
-
-                  return (
-                    <div key={idx} className="imagen-item">
-                      <div className="imagen-placeholder">{nombreArchivo}</div>
-                      <div className="imagen-acciones">
-                        <button onClick={() => abrirVisor(archivoUrl)} disabled={!esImagen}>Ver</button>
-                        <a href={archivoUrl} download={nombreArchivo}>
-                          <button>Descargar</button>
-                        </a>
-                      </div>
+          <div className="chat-notas">
+            <h3>Historial de Notas y Comentarios</h3>
+            <div className="chat-mensajes">
+              {proyecto.historial && Array.isArray(proyecto.historial) && proyecto.historial.length > 0 ? (
+                proyecto.historial.map((mensaje, idx) => {
+                const fecha = mensaje.created_at 
+                  ? new Date(mensaje.created_at).toLocaleString('es-ES', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })
+                  : 'Sin fecha';
+                let archivos = [];
+                try {
+                  if (mensaje.archivos) {
+                    if (typeof mensaje.archivos === 'string') {
+                      try {
+                        archivos = JSON.parse(mensaje.archivos);
+                      } catch (parseError) {
+                        // Si no es JSON válido, intentar como string simple
+                        archivos = [mensaje.archivos];
+                      }
+                    } else if (Array.isArray(mensaje.archivos)) {
+                      archivos = mensaje.archivos;
+                    } else if (typeof mensaje.archivos === 'object') {
+                      archivos = [mensaje.archivos];
+                    }
+                  }
+                } catch (e) {
+                  console.warn("Error parseando archivos:", e, mensaje.archivos);
+                  archivos = [];
+                }
+                
+                return (
+                  <div key={`msg-${mensaje.id || idx}`} className="mensaje-chat">
+                    <div className="mensaje-header">
+                      <strong>{mensaje.usuario_nombre || 'Usuario'}</strong>
+                      <span className="mensaje-fecha">{fecha}</span>
                     </div>
-                  );
-                })}
-              </div>
+                    {mensaje.nota && (
+                      <div className="mensaje-texto">{mensaje.nota}</div>
+                    )}
+                    {archivos && archivos.length > 0 && (
+                      <div className="mensaje-archivos">
+                        {archivos.map((archivo, aIdx) => {
+                          if (!archivo) return null;
+                          
+                          // Manejar diferentes formatos de archivo
+                          let archivoRuta = '';
+                          let nombreArchivo = '';
+                          
+                          if (typeof archivo === 'string') {
+                            archivoRuta = archivo;
+                            nombreArchivo = archivo.split("/").pop() || archivo.split("\\").pop() || `archivo-${aIdx + 1}`;
+                          } else if (archivo && typeof archivo === 'object') {
+                            archivoRuta = archivo.ruta || archivo.url || archivo.path || archivo.name || '';
+                            nombreArchivo = archivo.nombre || archivo.name || archivoRuta.split("/").pop() || archivoRuta.split("\\").pop() || `archivo-${aIdx + 1}`;
+                          }
+                          
+                          if (!archivoRuta) return null;
+                          
+                          const archivoUrl = getArchivoUrl(archivoRuta);
+                          const esImagen = /\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(nombreArchivo);
+                          const esSTL = /\.(stl)$/i.test(nombreArchivo);
+                          
+                          return (
+                            <div key={`arch-${aIdx}-${mensaje.id || idx}`} className="archivo-item">
+                              {esImagen ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
+                                  <img 
+                                    src={archivoUrl} 
+                                    alt={nombreArchivo}
+                                    className="imagen-miniatura"
+                                    onClick={() => abrirVisor(archivoUrl)}
+                                    onError={(e) => {
+                                      e.target.style.display = 'none';
+                                      const fallback = e.target.nextElementSibling;
+                                      if (fallback) fallback.style.display = 'block';
+                                    }}
+                                  />
+                                  <a 
+                                    href={archivoUrl} 
+                                    download={nombreArchivo}
+                                    style={{ fontSize: '12px', color: '#3498db', textDecoration: 'none', padding: '4px 8px', backgroundColor: '#e3f2fd', borderRadius: '4px', display: 'inline-block', marginTop: '4px' }}
+                                  >
+                                    📥 Descargar
+                                  </a>
+                                  <a 
+                                    href={archivoUrl} 
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ fontSize: '12px', color: '#27ae60', textDecoration: 'none', padding: '4px 8px', backgroundColor: '#d4edda', borderRadius: '4px', display: 'inline-block', marginTop: '4px', marginLeft: '4px' }}
+                                  >
+                                    🔗 Ver enlace
+                                  </a>
+                                </div>
+                              ) : (
+                                <a 
+                                  href={archivoUrl} 
+                                  download={nombreArchivo}
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    padding: '8px 12px',
+                                    backgroundColor: esSTL ? '#9b59b6' : '#e3f2fd',
+                                    color: esSTL ? '#fff' : '#3498db',
+                                    textDecoration: 'none',
+                                    borderRadius: '4px',
+                                    fontSize: '13px',
+                                    fontWeight: '500',
+                                    transition: 'background-color 0.2s'
+                                  }}
+                                  onMouseEnter={(e) => e.target.style.backgroundColor = esSTL ? '#8e44ad' : '#bbdefb'}
+                                  onMouseLeave={(e) => e.target.style.backgroundColor = esSTL ? '#9b59b6' : '#e3f2fd'}
+                                >
+                                  {esSTL ? '📦' : '📎'} {nombreArchivo}
+                                </a>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+                })
+              ) : (
+                <div className="sin-mensajes">No hay notas o comentarios aún</div>
+              )}
             </div>
-          )}
+          </div>
+
         </div>
       </div>
 

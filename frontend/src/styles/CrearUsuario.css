@@ -1,0 +1,156 @@
+/* Contenedor principal */
+.crear-usuario-container {
+  width: 95%;
+  max-width: 550px;
+  margin: 10px auto;
+  padding: 15px 20px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.crear-usuario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.crear-usuario-header h2 {
+  color: #0d47a1;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.btn-volver {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  background-color: #6c757d;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-volver:hover {
+  background-color: #5a6268;
+}
+
+/* Mensajes */
+.mensaje {
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-weight: 500;
+  white-space: pre-line;
+  font-size: 13px;
+}
+
+.mensaje.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.mensaje.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Formulario */
+.crear-usuario-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.crear-usuario-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 13px;
+  color: #34495e;
+  gap: 4px;
+}
+
+.crear-usuario-form input,
+.crear-usuario-form select {
+  padding: 8px 12px;
+  border: 1px solid #cfd8dc;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.crear-usuario-form input:focus,
+.crear-usuario-form select:focus {
+  outline: none;
+  border-color: #0e99bb;
+  box-shadow: 0 0 0 2px rgba(14, 153, 187, 0.15);
+  background: #fff;
+}
+
+/* Acciones del formulario */
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+
+.btn-submit {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  background-color: #27ae60;
+  transition: all 0.2s ease;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #1e8449;
+}
+
+.btn-submit:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  background-color: #6c757d;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+  background-color: #5a6268;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+

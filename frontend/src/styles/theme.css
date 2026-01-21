@@ -1,0 +1,140 @@
+/**
+ * Estilos para temas claro y oscuro
+ */
+
+/* Variables CSS para tema claro (por defecto) */
+:root {
+  --bg-primary: #f5f7fa;
+  --bg-secondary: #e8ecf1;
+  --bg-tertiary: #d1d9e0;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --border-color: #cbd5e1;
+  --accent-color: #117b9b;
+  --accent-hover: #0e6a85;
+  --success-color: #10b981;
+  --error-color: #ef4444;
+  --warning-color: #f59e0b;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --card-bg: #e8ecf1;
+  --card-hover: #d1d9e0;
+}
+
+/* Variables CSS para tema oscuro - Mejorado */
+.dark-theme {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #e2e8f0;
+  --text-tertiary: #cbd5e1;
+  --border-color: #475569;
+  --accent-color: #1a9fb8;
+  --accent-hover: #117b9b;
+  --success-color: #34d399;
+  --error-color: #f87171;
+  --warning-color: #fbbf24;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.7);
+  --sidebar-gradient: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  --card-bg: #1e293b;
+  --card-hover: #334155;
+}
+
+/* Aplicar variables a elementos comunes */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Tema claro - variables adicionales */
+:root {
+  --sidebar-gradient: linear-gradient(180deg, #117b9b 0%, #0e6a85 100%);
+}
+
+/* Aplicar tema a componentes específicos */
+.estudiante-configuracion,
+.student-dashboard,
+.estudiante-progreso,
+.estudiante-mensajes,
+.estudiante-catalogo-container,
+.estudiante-mis-cursos-container,
+.student-layout-container,
+.student-main-content {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.config-panel,
+.stat-card,
+.curso-card,
+.certificado-card,
+.dashboard-section,
+.curso-reciente-card,
+.progreso-stat-card,
+.curso-card-estudiante {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.stat-card:hover,
+.curso-card:hover,
+.curso-reciente-card:hover {
+  background-color: var(--card-hover);
+}
+
+.form-group input,
+.form-group select {
+  background-color: var(--bg-primary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--accent-color);
+}
+
+.save-btn {
+  background: linear-gradient(135deg, var(--accent-color) 0%, #0e6a85 100%);
+  color: white;
+}
+
+.config-message.success {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: var(--success-color);
+  color: var(--success-color);
+}
+
+.config-message.error {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: var(--error-color);
+  color: var(--error-color);
+}
+
+/* Scrollbar styling para tema oscuro */
+.dark-theme ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark-theme ::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+.dark-theme ::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.dark-theme ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}

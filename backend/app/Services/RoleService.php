@@ -3,16 +3,15 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Models\Rol; // Si tienes una tabla separada de roles
+use App\Models\Rol;
 use Illuminate\Support\Facades\Log;
-use App\Services\BitacoraService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 class RoleService
 {
     /**
-     * 🔹 Asigna un rol a un usuario existente.
+     * 🟢 Asignar rol a un usuario
      */
     public function assignRole(int $userId, int $rolID): array
     {
@@ -21,54 +20,41 @@ class RoleService
             $user->rolID = $rolID;
             $user->save();
 
-            BitacoraService::registrar($user, 'Asignación de rol', "Rol asignado: {$rolID}");
-
             return [
                 'success' => true,
-                'message' => 'Rol asignado correctamente al usuario.',
-                'user' => $user
+                'message' => 'Rol asignado al usuario correctamente.',
+                'data' => $user
             ];
+
         } catch (ModelNotFoundException $e) {
-            Log::warning("❌ Usuario no encontrado al intentar asignar rol (ID: {$userId})");
-
-            return [
-                'success' => false,
-                'message' => 'Usuario no encontrado.'
-            ];
-        } catch (\Throwable $e) {
-            Log::error("❌ Error en RoleService@assignRole: " . $e->getMessage());
-
-            return [
-                'success' => false,
-                'message' => 'Error al asignar el rol al usuario.'
-            ];
+            return ['success'=>false,'message'=>'Usuario no encontrado'];
+        } catch (\Throwable $e){
+            Log::error("RoleService@assignRole: ".$e->getMessage());
+            return ['success'=>false,'message'=>'Error al asignar rol'];
         }
     }
 
+
     /**
-     * 🔹 Obtiene todos los usuarios que tienen un rol específico.
+     * 🟢 Obtener todos los usuarios por rol
      */
     public function getUsersByRole(int $rolID): array
     {
         try {
-            $users = User::where('rolID', $rolID)->get();
-
             return [
-                'success' => true,
-                'data' => $users
+                'success'=>true,
+                'data'=>User::where('rolID',$rolID)->get()
             ];
-        } catch (\Throwable $e) {
-            Log::error("❌ Error en RoleService@getUsersByRole: " . $e->getMessage());
 
-            return [
-                'success' => false,
-                'message' => 'Error al obtener los usuarios por rol.'
-            ];
+        } catch (\Throwable $e){
+            Log::error("RoleService@getUsersByRole: ".$e->getMessage());
+            return ['success'=>false,'message'=>'Error al obtener usuarios'];
         }
     }
 
+
     /**
-     * 🔹 Cambia el rol de un usuario existente.
+     * 🟢 Cambiar rol de un usuario
      */
     public function changeUserRole(int $userId, int $nuevoRolID): array
     {
@@ -79,68 +65,70 @@ class RoleService
             $user->rolID = $nuevoRolID;
             $user->save();
 
-            BitacoraService::registrar(
-                $user,
-                'Cambio de rol',
-                "Rol anterior: {$rolAnterior}, nuevo rol: {$nuevoRolID}"
-            );
-
             return [
                 'success' => true,
-                'message' => 'Rol de usuario actualizado correctamente.',
-                'user' => $user
+                'message' => "Rol actualizado de {$rolAnterior} → {$nuevoRolID}",
+                'data' => $user
             ];
-        } catch (ModelNotFoundException $e) {
-            return [
-                'success' => false,
-                'message' => 'Usuario no encontrado.'
-            ];
-        } catch (\Throwable $e) {
-            Log::error("❌ Error en RoleService@changeUserRole: " . $e->getMessage());
 
-            return [
-                'success' => false,
-                'message' => 'Error al cambiar el rol del usuario.'
-            ];
+        } catch (ModelNotFoundException $e){
+            return ['success'=>false,'message'=>'Usuario no encontrado'];
+        } catch (\Throwable $e){
+            Log::error("RoleService@changeUserRole: ".$e->getMessage());
+            return ['success'=>false,'message'=>'Error al actualizar rol de usuario'];
         }
     }
 
+
     /**
-     * 🔹 Obtiene todos los roles existentes.
+     * 🟢 Traer roles
      */
     public function getAllRoles()
     {
+        return Rol::with('permisos')->get(); // AHORA VIENE CON PERMISOS DIRECTOS
+    }
+
+
+    /**
+     * 🟢 Obtener permisos vía relación belongsToMany()
+     */
+    public function getPermisosByRol(int $rolID): array
+    {
         try {
-            return Rol::all();
-        } catch (\Throwable $e) {
-            Log::error("❌ Error en RoleService@getAllRoles: " . $e->getMessage());
-            return [];
+            $rol = Rol::with('permisos')->findOrFail($rolID);
+
+            return [
+                'success'=>true,
+                'data'=>$rol->permisos
+            ];
+
+        } catch (ModelNotFoundException $e){
+            return ['success'=>false,'message'=>'Rol no encontrado'];
+        } catch (\Throwable $e){
+            Log::error("RoleService@getPermisosByRol: ".$e->getMessage());
+            return ['success'=>false,'message'=>'Error al obtener permisos'];
         }
     }
 
+
     /**
-     * 🔹 Obtiene los permisos asociados a un rol.
+     * 🟢 Asignar permisos a rol (admite crear/actualizar)
      */
-    public function getPermisosByRol(int $rolID)
+    public function syncPermisos(int $rolID, array $permisos): array
     {
         try {
-            $permisos = DB::table('rolpermiso')
-                ->join('permiso', 'rolpermiso.permisoID', '=', 'permiso.permisoID')
-                ->where('rolpermiso.rolID', $rolID)
-                ->select('permiso.nombreModulo', 'permiso.nombreSubmodulo')
-                ->get();
+            $rol = Rol::findOrFail($rolID);
+            $rol->permisos()->sync($permisos);  // <<<< ESTA ES LA IMPLEMENTACIÓN IDEAL
 
             return [
-                'success' => true,
-                'data' => $permisos
+                'success'=>true,
+                'message'=>'Permisos actualizados',
+                'data'=>$rol->permisos
             ];
-        } catch (\Throwable $e) {
-            Log::error("❌ Error en RoleService@getPermisosByRol: " . $e->getMessage());
 
-            return [
-                'success' => false,
-                'message' => 'Error al obtener los permisos del rol.'
-            ];
+        } catch (\Throwable $e){
+            Log::error("RoleService@syncPermisos: ".$e->getMessage());
+            return ['success'=>false,'message'=>'Error al actualizar permisos'];
         }
     }
 }

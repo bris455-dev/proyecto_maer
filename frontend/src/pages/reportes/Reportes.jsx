@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { getReportes, exportReportesExcel } from "../../api/reportes";
 import { getClientes } from "../../api/clientesApi";
+import { useAuth } from "../../hooks/useAuth";
 import {
   getClienteId,
   getEmpleadoId,
@@ -11,11 +12,16 @@ import {
 import "../../styles/reportes.css";
 
 export default function Reportes() {
+  const { user } = useAuth();
+  const esAdmin = user?.rolID === 1;
+
   const [dashboard, setDashboard] = useState({
     total_proyectos: 0,
     total_unidades: 0,
     total_clientes: 0,
     total_disenadores: 0,
+    total_facturacion: 0,
+    total_comisiones: 0,
   });
 
   const [reportes, setReportes] = useState([]);
@@ -23,19 +29,12 @@ export default function Reportes() {
 
   const [clientes, setClientes] = useState([]);
   const [diseñadores, setDiseñadores] = useState([]);
-  const [tiposTratamiento] = useState([
-    "Corona",
-    "Puente",
-    "Incrustación",
-    "Carilla",
-    "Encerado",
-  ]);
 
   const [filtro, setFiltro] = useState({
     fechaInicio: "",
+    fechaFin: "",
     clienteID: "",
     diseñadorID: "",
-    tipoPieza: "",
   });
 
   const [mostrarReporte, setMostrarReporte] = useState(false);
@@ -73,7 +72,8 @@ export default function Reportes() {
       try {
         // === Diseñadores / Usuarios ===
         const token = localStorage.getItem("auth_token");
-        const respuesta = await fetch("/api/usuarios", {
+        const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
+        const respuesta = await fetch(`${API_BASE}/api/usuarios`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
         const data = await respuesta.json().catch(() => ({}));
@@ -96,20 +96,54 @@ export default function Reportes() {
     };
   }, []);
 
-  const handleGenerarReporte = () => setMostrarReporte(true);
+  const handleGenerarReporte = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (filtro.fechaInicio) params.append('fecha_inicio', filtro.fechaInicio);
+      if (filtro.fechaFin) params.append('fecha_fin', filtro.fechaFin);
+      if (filtro.clienteID) params.append('clienteID', filtro.clienteID);
+      if (filtro.diseñadorID) params.append('empleadoID', filtro.diseñadorID);
+
+      const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
+      const token = localStorage.getItem("auth_token");
+      const url = `${API_BASE}/api/reportes?${params.toString()}`;
+      const response = await fetch(url, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      const data = await response.json();
+      
+      setDashboard(data.dashboard || {});
+      setReportes(data.report || []);
+      setMostrarReporte(true);
+    } catch (err) {
+      console.error("Error generando reporte:", err);
+      alert("Error al generar el reporte");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleExport = async () => {
     try {
-      const blob = await exportReportesExcel();
+      // Pasar los filtros actuales al exportar
+      const exportFilters = {
+        fechaInicio: filtro.fechaInicio,
+        fechaFin: filtro.fechaFin,
+        clienteID: filtro.clienteID,
+        diseñadorID: filtro.diseñadorID,
+      };
+      
+      const blob = await exportReportesExcel(exportFilters);
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "reportes.xlsx";
+      a.download = `reportes_${new Date().toISOString().split('T')[0]}.xlsx`;
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Error exportando reportes:", err);
-      alert("No se pudo exportar el archivo");
+      alert(err.message || "No se pudo exportar el archivo");
     }
   };
 
@@ -117,13 +151,14 @@ export default function Reportes() {
 
   return (
     <div className="reportes-container">
-      <h2>Dashboard de Reportes</h2>
-
-      <div className="dashboard-cards">
-        <div className="card">Proyectos: {dashboard.total_proyectos}</div>
-        <div className="card">Unidades: {dashboard.total_unidades}</div>
-        <div className="card">Clientes: {dashboard.total_clientes}</div>
-        <div className="card">Diseñadores: {dashboard.total_disenadores}</div>
+      <div className="reportes-header">
+        <h2>Reportes</h2>
+        <button 
+          className="btn-dashboard" 
+          onClick={() => window.location.href = '/reportes/dashboard'}
+        >
+          Ver Dashboard
+        </button>
       </div>
 
       <h2>Filtros</h2>
@@ -135,6 +170,17 @@ export default function Reportes() {
             value={filtro.fechaInicio}
             onChange={(e) =>
               setFiltro({ ...filtro, fechaInicio: e.target.value })
+            }
+          />
+        </label>
+
+        <label>
+          Fecha Hasta:
+          <input
+            type="date"
+            value={filtro.fechaFin}
+            onChange={(e) =>
+              setFiltro({ ...filtro, fechaFin: e.target.value })
             }
           />
         </label>
@@ -163,67 +209,106 @@ export default function Reportes() {
             }
           >
             <option value="">-- Seleccionar Diseñador --</option>
-            {diseñadores.map((d) => (
-              <option key={getEmpleadoId(d)} value={getEmpleadoId(d)}>
-                {getEmpleadoNombre(d)}
-              </option>
-            ))}
+            {diseñadores.map((d, idx) => {
+              const empId = getEmpleadoId(d);
+              const userId = d.id || d.userID || `user-${idx}`;
+              return (
+                <option key={`diseñador-${userId}-${empId}-${idx}`} value={empId}>
+                  {getEmpleadoNombre(d)}
+                </option>
+              );
+            })}
           </select>
         </label>
 
-        <label>
-          Tipo de Pieza:
-          <select
-            value={filtro.tipoPieza}
-            onChange={(e) => setFiltro({ ...filtro, tipoPieza: e.target.value })}
-          >
-            <option value="">-- Seleccionar Tipo --</option>
-            {tiposTratamiento.map((t, idx) => (
-              <option key={idx} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-        </label>
       </div>
 
-      <button className="btn-generar" onClick={handleGenerarReporte}>
-        Generar Reporte
-      </button>
+      <div className="botones-accion">
+        <button className="btn-generar" onClick={handleGenerarReporte}>
+          Generar Reporte
+        </button>
+        {mostrarReporte && (
+          <button className="btn-limpiar" onClick={() => {
+            setFiltro({
+              fechaInicio: "",
+              fechaFin: "",
+              clienteID: "",
+              diseñadorID: "",
+            });
+            setMostrarReporte(false);
+            setReportes([]);
+          }}>
+            Limpiar Filtros
+          </button>
+        )}
+      </div>
 
       {mostrarReporte && (
         <>
+          {/* Indicadores de Facturación */}
+          <div className="indicadores-facturacion">
+            <div className="indicador-card">
+              <div className="indicador-icon">💰</div>
+              <div className="indicador-content">
+                <h4>Total Facturación</h4>
+                <p className="indicador-valor">${dashboard.total_facturacion?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}</p>
+                <span className="indicador-unidades">{dashboard.total_unidades} unidades</span>
+              </div>
+            </div>
+            <div className="indicador-card">
+              <div className="indicador-icon">💵</div>
+              <div className="indicador-content">
+                <h4>Total Comisiones</h4>
+                <p className="indicador-valor">${dashboard.total_comisiones?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}</p>
+                <span className="indicador-unidades">35% del total</span>
+              </div>
+            </div>
+            <div className="indicador-card">
+              <div className="indicador-icon">📊</div>
+              <div className="indicador-content">
+                <h4>Promedio por Unidad</h4>
+                <p className="indicador-valor">
+                  ${dashboard.total_unidades > 0 
+                    ? (dashboard.total_facturacion / dashboard.total_unidades).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                    : '0.00'}
+                </p>
+                <span className="indicador-unidades">Por unidad</span>
+              </div>
+            </div>
+          </div>
+
           <button className="btn-export" onClick={handleExport}>
             Exportar a Excel
           </button>
 
-          <table className="reportes-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Cliente</th>
-                <th>Documento</th>
-                <th>Fecha Inicio</th>
-                <th>Fecha Límite</th>
-                <th>Paciente</th>
-                <th>Detalle Proyecto</th>
-                <th>Unidades</th>
-                <th>Diseñador</th>
-                <th>Notas</th>
-                <th>Precio Total</th>
-                <th>Comisión Diseñador</th>
-              </tr>
-            </thead>
-            <tbody>
+          <div className="reportes-table-wrapper">
+            <table className="reportes-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cliente</th>
+                  <th>Documento</th>
+                  <th>Fecha Inicio</th>
+                  <th>Fecha Límite</th>
+                  <th>Paciente</th>
+                  <th>Detalle Proyecto</th>
+                  <th>Unidades</th>
+                  <th>Diseñador</th>
+                  <th>Notas</th>
+                  {esAdmin && <th>Precio Total</th>}
+                  {esAdmin && <th>Comisión Diseñador</th>}
+                </tr>
+              </thead>
+              <tbody>
               {reportes.length === 0 ? (
                 <tr>
-                  <td colSpan="12" style={{ textAlign: "center" }}>
+                  <td colSpan={esAdmin ? 12 : 10} style={{ textAlign: "center" }}>
                     No hay reportes disponibles
                   </td>
                 </tr>
               ) : (
-                reportes.map((r) => (
-                  <tr key={r.idReporte}>
+                reportes.map((r, idx) => (
+                  <tr key={`reporte-${r.idReporte || idx}`}>
                     <td>{r.idReporte}</td>
                     <td>{r.Cliente}</td>
                     <td>{r.Documento_Cliente}</td>
@@ -238,13 +323,14 @@ export default function Reportes() {
                     <td>{r.Unidades}</td>
                     <td>{r.NombreDiseñador}</td>
                     <td>{r.Notas}</td>
-                    <td>{r.PrecioTotal}</td>
-                    <td>{r.ComisionDiseñador}</td>
+                    {esAdmin && <td>${r.PrecioTotal ? parseFloat(r.PrecioTotal).toFixed(2) : '0.00'}</td>}
+                    {esAdmin && <td>${r.ComisionDiseñador ? parseFloat(r.ComisionDiseñador).toFixed(2) : '0.00'}</td>}
                   </tr>
                 ))
               )}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </div>

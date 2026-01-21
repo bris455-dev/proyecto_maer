@@ -3,8 +3,11 @@
 namespace App\Services;
 
 use App\Models\Proyecto;
-use App\Models\Tratamiento;
-use App\Models\ProyectoDetalle;
+use App\Services\Proyectos\ProyectoHistorialService;
+use App\Services\Proyectos\ProyectoDetalleService;
+use App\Services\Proyectos\ProyectoTipificacionService;
+use App\Services\Proyectos\ProyectoListService;
+use App\Services\Proyectos\ProyectoBillingService;
 use Illuminate\Support\Facades\Log;
 use App\Services\BitacoraService;
 use Illuminate\Support\Facades\DB;
@@ -12,10 +15,26 @@ use Illuminate\Support\Facades\DB;
 class ProyectoService
 {
     protected BitacoraService $bitacoraService;
+    protected ProyectoHistorialService $historialService;
+    protected ProyectoDetalleService $detalleService;
+    protected ProyectoTipificacionService $tipificacionService;
+    protected ProyectoListService $listService;
+    protected ProyectoBillingService $billingService;
 
-    public function __construct(BitacoraService $bitacoraService)
-    {
+    public function __construct(
+        BitacoraService $bitacoraService,
+        ProyectoHistorialService $historialService,
+        ProyectoDetalleService $detalleService,
+        ProyectoTipificacionService $tipificacionService,
+        ProyectoListService $listService,
+        ProyectoBillingService $billingService
+    ) {
         $this->bitacoraService = $bitacoraService;
+        $this->historialService = $historialService;
+        $this->detalleService = $detalleService;
+        $this->tipificacionService = $tipificacionService;
+        $this->listService = $listService;
+        $this->billingService = $billingService;
     }
 
     /**
@@ -23,13 +42,16 @@ class ProyectoService
      */
     public function create(array $data, $actor, string $ip): array
     {
+        Log::info("🔄 ProyectoService::create - Iniciando");
         DB::beginTransaction();
         try {
             $detalles = $data['detalles'] ?? [];
+            Log::info("🔄 ProyectoService::create - Detalles a procesar: " . count($detalles));
 
-            $proyecto = Proyecto::create([
+            // Preparar datos para crear el proyecto
+            $proyectoData = [
+                'nombre' => $data['nombre'] ?? 'Proyecto sin nombre',
                 'numero_proyecto' => $data['numero_proyecto'] ?? null,
-                'nombre' => $data['nombre'],
                 'clienteID' => $data['clienteID'] ?? null,
                 'empleadoID' => $data['empleadoID'] ?? null,
                 'fecha_inicio' => $data['fecha_inicio'] ?? null,
@@ -37,31 +59,55 @@ class ProyectoService
                 'fecha_entrega' => $data['fecha_entrega'] ?? null,
                 'notas' => $data['notas'] ?? null,
                 'estado' => $data['estado'] ?? 1,
+                'tipificacion' => $data['tipificacion'] ?? 'Pendiente',
                 'total' => 0,
                 'created_by' => $actor->id ?? null,
-            ]);
+            ];
+            
+            Log::info("🔄 ProyectoService::create - Creando proyecto en BD");
+            Log::info("🔄 Datos a insertar: " . json_encode($proyectoData));
+            
+            try {
+                $proyecto = Proyecto::create($proyectoData);
+                Log::info("🔄 Proyecto::create ejecutado. Resultado: " . ($proyecto ? "OK" : "NULL"));
+            } catch (\Throwable $e) {
+                Log::error("❌ Error en Proyecto::create: " . $e->getMessage());
+                Log::error("❌ Stack trace: " . $e->getTraceAsString());
+                throw $e;
+            }
+            
+            if (!$proyecto) {
+                Log::error("❌ Proyecto::create retornó NULL");
+                throw new \Exception("No se pudo crear el proyecto en la base de datos - retornó NULL");
+            }
+            
+            if (!isset($proyecto->proyectoID) || !$proyecto->proyectoID) {
+                Log::error("❌ Proyecto creado pero proyectoID es null o vacío");
+                Log::error("❌ Proyecto objeto: " . json_encode($proyecto->toArray()));
+                throw new \Exception("No se pudo crear el proyecto - proyectoID no generado");
+            }
+            
+            Log::info("✅ Proyecto creado. ProyectoID: {$proyecto->proyectoID}");
 
             // Insertar detalles y calcular precio
-            foreach ($detalles as $d) {
-                $pieza = $d['pieza'] ?? null;
-                $tratamientoID = $d['tratamientoID'] ?? null;
-                $tModel = $tratamientoID ? Tratamiento::find($tratamientoID) : null;
-                $nombreTratamiento = $tModel ? strtolower($tModel->nombre) : '';
-
-                $precio = ($nombreTratamiento === 'encerado') ? 8.0 : 10.0;
-
-                ProyectoDetalle::create([
-                    'proyectoID' => $proyecto->proyectoID,
-                    'pieza' => $pieza,
-                    'tratamientoID' => $tratamientoID,
-                    'precio' => $precio,
-                    'color' => $d['color'] ?? null,
-                ]);
-            }
+            $this->detalleService->crearDetalles($proyecto, $detalles);
 
             // Calcular total
-            $proyecto->total = $this->calculateTotalFromDetalles($proyecto);
+            $proyecto->total = $this->detalleService->calculateTotalFromDetalles($proyecto);
             $proyecto->save();
+
+            // Guardar nota inicial en historial si existe (sin archivos, se agregarán después)
+            if (!empty($proyecto->notas)) {
+                $this->historialService->crearNotaInicial($proyecto->proyectoID, $proyecto->notas, $actor);
+            } elseif (isset($data['archivos_iniciales']) && !empty($data['archivos_iniciales'])) {
+                // Si no hay notas pero hay archivos, crear historial vacío que se actualizará después
+                $this->historialService->crearEntradaSoloArchivos(
+                    $proyecto->proyectoID, 
+                    [], 
+                    $actor, 
+                    'Archivos adjuntos al crear el proyecto'
+                );
+            }
 
             // Bitácora
             $this->bitacoraService->registrar(
@@ -72,49 +118,88 @@ class ProyectoService
             );
 
             DB::commit();
-            return ['success' => true, 'data' => $proyecto];
+            Log::info("✅ ProyectoService::create - Transacción completada. ProyectoID: {$proyecto->proyectoID}");
+            
+            // Verificar que el proyecto realmente existe en la BD y cargar relaciones
+            $proyectoVerificado = Proyecto::with(['empleado', 'cliente', 'detalles.tratamiento'])->find($proyecto->proyectoID);
+            if (!$proyectoVerificado) {
+                Log::error("❌ CRÍTICO: Proyecto creado pero no se encuentra en BD. ProyectoID: {$proyecto->proyectoID}");
+                return [
+                    'success' => false,
+                    'message' => 'Error: El proyecto se creó pero no se pudo verificar en la base de datos'
+                ];
+            }
+            
+            Log::info("✅ ProyectoService::create - Proyecto verificado en BD. Retornando datos.");
+            return ['success' => true, 'data' => $proyectoVerificado];
         } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error("❌ Error ProyectoService@create: " . $e->getMessage());
-            return ['success' => false, 'message' => 'Error al crear proyecto.'];
+            $errorMessage = $e->getMessage();
+            Log::error("❌ Error ProyectoService@create: " . $errorMessage);
+            Log::error("Stack trace: " . $e->getTraceAsString());
+            Log::error("Payload recibido: " . json_encode($data));
+            return [
+                'success' => false, 
+                'message' => env('APP_DEBUG') ? $errorMessage : 'Error al crear proyecto. Verifique los logs para más detalles.'
+            ];
         }
     }
+
 
     /**
      * Actualizar proyecto con detalles
      */
     public function update(Proyecto $proyecto, array $data, $actor, string $ip): array
     {
+        Log::info("🔄 ProyectoService::update - Iniciando. ProyectoID: {$proyecto->proyectoID}");
         DB::beginTransaction();
         try {
-            foreach (['numero_proyecto','nombre','clienteID','empleadoID','fecha_inicio','fecha_fin','fecha_entrega','notas','estado'] as $f) {
-                if (array_key_exists($f, $data)) $proyecto->{$f} = $data[$f];
+            // Validar permisos para cambiar tipificación según rol
+            if (isset($data['tipificacion'])) {
+                $validacion = $this->tipificacionService->validarCambioTipificacion($actor, $data['tipificacion']);
+                if (!$validacion['success']) {
+                    return $validacion;
+                }
+                
+                if ($data['tipificacion'] === 'Atrasado') {
+                    unset($data['tipificacion']);
+                } else {
+                    $proyecto->tipificacion = $data['tipificacion'];
+                }
             }
-
+            
+            // Actualizar campos del proyecto
+            foreach (['numero_proyecto','nombre','clienteID','empleadoID','fecha_inicio','fecha_fin','fecha_entrega','notas','estado'] as $f) {
+                if (array_key_exists($f, $data)) {
+                    $proyecto->{$f} = $data[$f];
+                }
+            }
+            
             // Reemplazar detalles
             if (!empty($data['detalles'])) {
-                $proyecto->detalles()->delete();
-                foreach ($data['detalles'] as $d) {
-                    $pieza = $d['pieza'] ?? null;
-                    $tratamientoID = $d['tratamientoID'] ?? null;
-                    $tModel = $tratamientoID ? Tratamiento::find($tratamientoID) : null;
-                    $nombreTratamiento = $tModel ? strtolower($tModel->nombre) : '';
+                $this->detalleService->reemplazarDetalles($proyecto, $data['detalles']);
+            }
 
-                    $precio = ($nombreTratamiento === 'encerado') ? 8.0 : 10.0;
-
-                    ProyectoDetalle::create([
-                        'proyectoID' => $proyecto->proyectoID,
-                        'pieza' => $pieza,
-                        'tratamientoID' => $tratamientoID,
-                        'precio' => $precio,
-                        'color' => $d['color'] ?? null,
-                    ]);
-                }
+            // Guardar nueva nota en historial si se proporciona
+            if (isset($data['nueva_nota']) && !empty(trim($data['nueva_nota']))) {
+                $archivos = isset($data['archivos_nota']) && is_array($data['archivos_nota']) 
+                    ? $data['archivos_nota'] 
+                    : null;
+                $this->historialService->agregarNota($proyecto->proyectoID, $data['nueva_nota'], $actor, $archivos);
             }
 
             // Recalcular total
-            $proyecto->total = $this->calculateTotalFromDetalles($proyecto);
+            $proyecto->total = $this->detalleService->calculateTotalFromDetalles($proyecto);
+            
+            // Recalcular tipificación después de actualizar (por si cambió fecha_fin)
+            if (!isset($data['tipificacion']) || $data['tipificacion'] === 'Atrasado') {
+                $proyecto->tipificacion = $this->tipificacionService->calcularTipificacion($proyecto);
+            }
+            
             $proyecto->save();
+
+            // Recargar el proyecto con relaciones para devolverlo
+            $proyecto->load(['empleado', 'cliente', 'detalles.tratamiento']);
 
             $this->bitacoraService->registrar(
                 $actor,
@@ -128,82 +213,32 @@ class ProyectoService
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error("❌ Error ProyectoService@update: " . $e->getMessage());
+            Log::error("Stack trace: " . $e->getTraceAsString());
             return ['success' => false, 'message' => 'Error al actualizar proyecto.'];
         }
     }
 
     /**
-     * Calcular total sumando precios de detalles
+     * Calcular tipificación del proyecto (método público para compatibilidad)
      */
-    protected function calculateTotalFromDetalles(Proyecto $proyecto): float
+    public function calcularTipificacion(Proyecto $proyecto): string
     {
-        $proyecto->loadMissing('detalles');
-        return round($proyecto->detalles->sum(fn($d) => $d->precio), 2);
+        return $this->tipificacionService->calcularTipificacion($proyecto);
     }
 
     /**
-     * Resumen de facturación incluyendo comisión diseñador (35%)
-     */
-    public function billingSummary(Proyecto $proyecto, $user)
-    {
-        $proyecto->loadMissing('detalles.tratamiento', 'empleado');
-
-        $resumen = [];
-        $totalGeneral = 0;
-        $comisionTotal = 0;
-
-        foreach ($proyecto->detalles as $detalle) {
-            $tName = $detalle->tratamiento ? $detalle->tratamiento->nombre : 'Otro';
-            $subtotal = $detalle->precio;
-            $comision = $detalle->precio * 0.35; // 35% comisión diseñador
-            $totalGeneral += $subtotal;
-            $comisionTotal += $comision;
-
-            $resumen[] = [
-                'pieza' => $detalle->pieza,
-                'tratamiento' => $tName,
-                'precio_unitario' => $detalle->precio,
-                'comision_disenador' => ($user->rolID === 1) ? $comision : null
-            ];
-        }
-
-        return [
-            'success' => true,
-            'resumen' => $resumen,
-            'total_general' => ($user->rolID === 1) ? $totalGeneral : null,
-            'comision_total' => ($user->rolID === 1) ? $comisionTotal : null
-        ];
-    }
-
-    /**
-     * Lista proyectos según rol
+     * Lista proyectos según rol (método público para compatibilidad)
      */
     public function listForUser($user, array $filters = [])
     {
-        $query = Proyecto::query();
-
-        if ($user->rolID == 1) {
-            // Admin: todos los proyectos
-        } elseif ($user->rolID == 2) {
-            $query->where('empleadoID', $user->empleadoID);
-        } else {
-            $query->where('clienteID', $user->clienteID);
-        }
-
-        if (!empty($filters['q'])) {
-            $q = $filters['q'];
-            $query->where(fn($qf) => $qf->where('nombre','like',"%{$q}%")->orWhere('proyectoID',$q));
-        }
-
-        return $query->orderBy('created_at','desc')->get();
+        return $this->listService->listForUser($user, $filters);
     }
 
     /**
-     * Normaliza paths de imágenes
+     * Resumen de facturación incluyendo comisión diseñador (35%) (método público para compatibilidad)
      */
-    protected function processUploadedImagePaths($images): array
+    public function billingSummary(Proyecto $proyecto, $user)
     {
-        if (!is_array($images)) return [];
-        return array_filter($images, fn($i) => is_string($i));
+        return $this->billingService->billingSummary($proyecto, $user);
     }
 }

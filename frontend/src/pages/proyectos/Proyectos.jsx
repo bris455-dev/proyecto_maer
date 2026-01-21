@@ -3,6 +3,8 @@ import { useProyectos } from '../../hooks/useProyectos.js';
 import { useNavigate } from 'react-router-dom';
 import { getClientes } from '../../api/clientesApi.js';
 import { getClienteNombre, getEmpleadoNombre, getEmpleadoId } from '../../utils/ProyectoHelpers.js';
+import { calcularTipificacionFinal, getTipificacionInfo } from '../../utils/tipificaciones.js';
+import { FaEye, FaEdit } from 'react-icons/fa';
 import '../../styles/proyectos.css';
 
 const formatFecha = (fecha) => {
@@ -34,7 +36,8 @@ const Proyectos = () => {
       try {
         // Empleados
         const token = localStorage.getItem("auth_token");
-        const respuesta = await fetch("/api/usuarios", {
+        const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
+        const respuesta = await fetch(`${API_BASE}/api/usuarios`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
         const data = await respuesta.json().catch(() => ({}));
@@ -81,13 +84,14 @@ const Proyectos = () => {
             <th>Cliente</th>
             <th>Diseñador</th>
             <th>Fecha Inicio</th>
+            <th>Tipificación</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {proyectos.length === 0 && (
             <tr>
-              <td colSpan="6" style={{ textAlign: 'center' }}>No hay proyectos registrados</td>
+              <td colSpan="7" style={{ textAlign: 'center' }}>No hay proyectos registrados</td>
             </tr>
           )}
           {proyectos.map((p) => {
@@ -110,16 +114,48 @@ const Proyectos = () => {
             // Normalizar empleado
             const empleado = empleados.find(e => getEmpleadoId(e) === (p.empleadoID || p.diseñadorID)) || p.empleado || { nombre: p.diseñador_nombre };
 
+            // Calcular tipificación final (incluyendo "Atrasado" automático)
+            const tipificacionFinal = calcularTipificacionFinal(p);
+            const tipificacionInfo = getTipificacionInfo(tipificacionFinal);
+
             return (
-              <tr key={id}>
+              <tr key={id} style={{ backgroundColor: tipificacionInfo.bgColor }}>
                 <td>{p.numero_proyecto || p.codigo || 'Sin asignar'}</td>
                 <td>{p.nombre || p.paciente || 'Sin asignar'}</td>
                 <td>{getClienteNombre(cliente)}</td>
                 <td>{getEmpleadoNombre(empleado)}</td>
                 <td>{formatFecha(p.fecha_inicio)}</td>
+                <td>
+                  <span 
+                    style={{
+                      display: 'inline-block',
+                      padding: '4px 12px',
+                      borderRadius: '4px',
+                      backgroundColor: tipificacionInfo.bgColor,
+                      color: tipificacionInfo.color,
+                      fontWeight: 'bold',
+                      border: `1px solid ${tipificacionInfo.color}`,
+                      fontSize: '0.9em'
+                    }}
+                  >
+                    {tipificacionInfo.nombre}
+                  </span>
+                </td>
                 <td className="proyectos-acciones">
-                  <button onClick={() => navigate(`/proyectos/${id}`)}>Ver Detalle</button>
-                  <button onClick={() => navigate(`/proyectos/editar/${id}`)}>Editar</button>
+                  <button 
+                    onClick={() => navigate(`/proyectos/${id}`)}
+                    className="btn-ver-detalle"
+                    title="Ver detalle del proyecto"
+                  >
+                    <FaEye />
+                  </button>
+                  <button 
+                    onClick={() => navigate(`/proyectos/editar/${id}`)}
+                    className="btn-editar-proyecto"
+                    title="Editar proyecto"
+                  >
+                    <FaEdit />
+                  </button>
                 </td>
               </tr>
             );

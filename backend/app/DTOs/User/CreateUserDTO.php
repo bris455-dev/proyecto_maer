@@ -4,27 +4,26 @@ namespace App\DTOs\User;
 
 class CreateUserDTO
 {
-    // Usuario
-    public string $tipo;
-    public string $email;
-    public int $rolID;
+  // Para empleado
+public ?string $empleado_nombre = null;
+public ?string $empleado_dni = null;
+public ?string $empleado_cargo = null;
+public ?string $empleado_email = null;
+public int $empleado_estado = 1;
 
-    // Empleado
-    public ?string $empleado_nombre;
-    public ?string $empleado_dni;
-    public ?string $empleado_cargo;
-    public ?string $empleado_estado;
-    public ?string $empleado_email; // <- agregado
+// Para cliente
+public ?string $cliente_nombre = null;
+public ?string $cliente_dni_ruc = null;
+public ?string $cliente_direccion = null;
+public ?string $cliente_pais = null;
+public ?string $cliente_email = null;
+public int $cliente_estado = 1;
 
-    // Cliente
-    public ?string $cliente_nombre;
-    public ?string $cliente_dni_ruc;
-    public ?string $cliente_direccion;
-    public ?string $cliente_pais;
-    public ?string $cliente_email;
-    public ?string $cliente_estado;
-    public ?string $cliente_created_at;
-    public ?string $cliente_updated_at;
+// Común
+public string $email;
+public int $rolID;
+public string $tipo;
+
 
     public function __construct(array $data)
     {
@@ -34,21 +33,54 @@ class CreateUserDTO
         $this->rolID = (int) $data['rolID'];
 
         // Empleado
-        $this->empleado_nombre = $data['nombre'] ?? null;
-        $this->empleado_dni = $data['dni'] ?? null;
-        $this->empleado_cargo = $data['cargo'] ?? null;
-        $this->empleado_estado = $data['estado'] ?? '1';
-        $this->empleado_email = $data['email'] ?? null; // <- agregado
+        if (isset($data['empleado_nombre'])) {
+            $this->empleado_nombre = $data['empleado_nombre'];
+        } elseif (isset($data['nombre']) && $data['tipo'] === 'empleado') {
+            $this->empleado_nombre = $data['nombre'];
+        }
+        
+        if (isset($data['empleado_dni'])) {
+            $this->empleado_dni = $data['empleado_dni'];
+        } elseif (isset($data['dni']) && $data['tipo'] === 'empleado') {
+            $this->empleado_dni = $data['dni'];
+        }
+        
+        if (isset($data['empleado_cargo'])) {
+            $this->empleado_cargo = $data['empleado_cargo'];
+        } elseif (isset($data['cargo']) && $data['tipo'] === 'empleado') {
+            $this->empleado_cargo = $data['cargo'];
+        }
+        
+        $this->empleado_email = $data['email'] ?? null;
+        $this->empleado_estado = isset($data['empleado_estado']) ? (int)$data['empleado_estado'] : 1;
 
         // Cliente
-        $this->cliente_nombre = $data['nombre_cliente'] ?? null;
-        $this->cliente_dni_ruc = $data['dni_ruc'] ?? null;
-        $this->cliente_direccion = $data['direccion'] ?? null;
-        $this->cliente_pais = $data['pais'] ?? null;
-        $this->cliente_email = $data['email_cliente'] ?? $data['email'] ?? null;
-        $this->cliente_estado = $data['estado_cliente'] ?? '1';
-        $this->cliente_created_at = $data['created_at'] ?? null;
-        $this->cliente_updated_at = $data['updated_at'] ?? null;
+        if (isset($data['cliente_nombre'])) {
+            $this->cliente_nombre = $data['cliente_nombre'];
+        } elseif (isset($data['nombre_cliente']) && $data['tipo'] === 'cliente') {
+            $this->cliente_nombre = $data['nombre_cliente'];
+        }
+        
+        if (isset($data['cliente_dni_ruc'])) {
+            $this->cliente_dni_ruc = $data['cliente_dni_ruc'];
+        } elseif (isset($data['dni_ruc']) && $data['tipo'] === 'cliente') {
+            $this->cliente_dni_ruc = $data['dni_ruc'];
+        }
+        
+        if (isset($data['cliente_direccion'])) {
+            $this->cliente_direccion = $data['cliente_direccion'];
+        } elseif (isset($data['direccion']) && $data['tipo'] === 'cliente') {
+            $this->cliente_direccion = $data['direccion'];
+        }
+        
+        if (isset($data['cliente_pais'])) {
+            $this->cliente_pais = $data['cliente_pais'];
+        } elseif (isset($data['pais']) && $data['tipo'] === 'cliente') {
+            $this->cliente_pais = $data['pais'];
+        }
+        
+        $this->cliente_email = $data['email'] ?? null;
+        $this->cliente_estado = isset($data['cliente_estado']) ? (int)$data['cliente_estado'] : 1;
     }
 
     public function toArray(): array

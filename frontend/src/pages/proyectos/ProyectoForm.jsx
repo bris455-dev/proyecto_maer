@@ -9,8 +9,11 @@ import {
   getProyectoById,
   getNextProyectoCodigo,
 } from "../../api/proyectos.js";
+import { useAuth } from "../../hooks/useAuth.js";
+import { getTipificacionesEditables } from "../../utils/tipificaciones.js";
 import "../../styles/proyectos.css";
 import "../../styles/ProyectoOdontograma.css";
+import "../../styles/chat.css";
 
 /* ============================================================
    CONFIGURACIÓN DE CATÁLOGOS Y FORMATOS
@@ -140,6 +143,7 @@ const getEmpleadoNombre = (empleado) =>
 export default function ProyectoForm() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { user } = useAuth();
 
   const [proyecto, setProyecto] = useState({
     numero_proyecto: "",
@@ -150,11 +154,16 @@ export default function ProyectoForm() {
     fecha_fin: "",
     fecha_entrega: "",
     notas: "",
+    nueva_nota: "",
     estado: 1,
+    tipificacion: "Pendiente",
   });
 
   // Estado para imágenes existentes (para mostrar en edición)
   const [imagenesExistentes, setImagenesExistentes] = useState([]);
+  
+  // Estado para el historial de notas y archivos
+  const [historial, setHistorial] = useState([]);
 
   const [clientes, setClientes] = useState([]);
   const [empleados, setEmpleados] = useState([]);
@@ -169,8 +178,11 @@ export default function ProyectoForm() {
      ============================================================ */
   useEffect(() => {
     let isMounted = true;
+    let hasFetched = false; // Prevenir múltiples llamadas
 
     const fetchData = async () => {
+      if (hasFetched) return; // Si ya se ejecutó, no hacer nada
+      hasFetched = true;
       try {
         const resClientes = await getClientes();
         const listaClientes = normalizarColeccion(resClientes, ["clientes"]);
@@ -181,16 +193,27 @@ export default function ProyectoForm() {
 
       try {
         const token = localStorage.getItem("auth_token");
-const respuesta = await fetch("/api/usuarios", {
+        const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
+        const respuesta = await fetch(`${API_BASE}/api/usuarios`, {
   headers: token ? { Authorization: `Bearer ${token}` } : {},
 });
 const data = await respuesta.json().catch(() => ({}));
 
 const todosUsuarios = normalizarColeccion(data, ["data", "usuarios"]);
 
-// Filtrar solo rol 1 (admin) y rol 2 (diseñador)
+        // Filtrar solo usuarios que tienen empleadoID válido
+        // Solo diseñadores (rol 2) y admins (rol 1) que tienen empleadoID asociado
 const listaEmpleados = todosUsuarios.filter((u) => {
   const rolId = u.rolID || u.rol?.rolID;
+          const empId = getEmpleadoId(u);
+          
+          // Solo incluir si tiene empleadoID válido (no null, no undefined, no string vacío)
+          // y es admin o diseñador
+          if (!empId || empId === "" || empId === null || empId === undefined) {
+            return false;
+          }
+          
+          // Solo incluir admin (rol 1) o diseñador (rol 2)
   return rolId === 1 || rolId === 2;
 });
 
@@ -226,13 +249,22 @@ if (isMounted) setEmpleados(listaEmpleados);
               : "",
             notas: proyectoData.notas || "",
             estado: proyectoData.estado ?? 1,
+            tipificacion: proyectoData.tipificacion || "Pendiente",
           });
 
           setDetalles(mapDetallesDesdeBackend(proyectoData.detalles || []));
           
-          // Cargar imágenes existentes
-          if (proyectoData.imagenes && Array.isArray(proyectoData.imagenes)) {
-            setImagenesExistentes(proyectoData.imagenes);
+          // No necesitamos cargar imagenesExistentes por separado
+          // Los archivos ya están en el historial y se muestran ahí
+          setImagenesExistentes([]);
+          
+          // Cargar historial de notas y archivos
+          if (proyectoData.historial && Array.isArray(proyectoData.historial)) {
+            setHistorial(proyectoData.historial);
+            console.log("📋 ProyectoForm - Historial cargado:", proyectoData.historial.length);
+          } else {
+            setHistorial([]);
+            console.log("📋 ProyectoForm - Historial vacío o no es array");
           }
         } catch (err) {
           console.error("Error cargando proyecto:", err);
@@ -245,6 +277,7 @@ if (isMounted) setEmpleados(listaEmpleados);
 
     return () => {
       isMounted = false;
+      hasFetched = false;
     };
   }, [id]);
 
@@ -265,21 +298,26 @@ if (isMounted) setEmpleados(listaEmpleados);
           codigo?.codigo ||
           "";
 
-        if (!valorCodigo) {
-          throw new Error("Sin código del servidor");
-        }
-
+        if (valorCodigo) {
         localStorage.setItem(CODIGO_STORAGE_KEY, valorCodigo);
         if (isMounted) {
           setProyecto((prev) => ({ ...prev, numero_proyecto: valorCodigo }));
           setCodigoError(null);
         }
-      } catch {
+        } else {
+          // Si no hay código del servidor, usar fallback local
+          const fallback = generarCodigoLocal();
+          if (isMounted) {
+            setProyecto((prev) => ({ ...prev, numero_proyecto: fallback }));
+            setCodigoError(null);
+          }
+        }
+      } catch (err) {
         // Silenciosamente usar código local si falla
         const fallback = generarCodigoLocal();
         if (isMounted) {
           setProyecto((prev) => ({ ...prev, numero_proyecto: fallback }));
-          setCodigoError(null); // No mostrar error, es normal que no exista el endpoint
+          setCodigoError(null);
         }
       } finally {
         if (isMounted) setCodigoCargando(false);
@@ -348,9 +386,14 @@ if (isMounted) setEmpleados(listaEmpleados);
         const tratamiento = tratamientosDisponibles.find(
           (t) => t.id === d.tratamientoID
         );
+        // Asegurar que tratamientoID sea un entero
+        const tratamientoID = Number(d.tratamientoID);
+        if (isNaN(tratamientoID) || tratamientoID <= 0) {
+          throw new Error(`Tratamiento inválido para la pieza ${d.pieza}`);
+        }
         return {
-          pieza: d.pieza,
-          tratamientoID: d.tratamientoID,
+          pieza: String(d.pieza),
+          tratamientoID: tratamientoID,
           precio: tratamiento?.precio || 10, // Precio según tratamiento
           color: tratamiento?.color || null,
         };
@@ -377,20 +420,75 @@ if (isMounted) setEmpleados(listaEmpleados);
         return;
       }
 
+      // Validar que se haya seleccionado cliente y diseñador
+      if (!clienteIDVal) {
+        alert("Debe seleccionar un cliente");
+        return;
+      }
+      if (!empleadoIDVal) {
+        alert("Debe seleccionar un diseñador");
+        return;
+      }
+
+      // Preparar payload con validaciones
       const payload = {
-        ...proyecto,
+        nombre: String(proyecto.nombre || "").trim(),
+        numero_proyecto: proyecto.numero_proyecto ? String(proyecto.numero_proyecto).trim() : null,
         clienteID: clienteIDVal,
         empleadoID: empleadoIDVal,
+        fecha_inicio: proyecto.fecha_inicio || null,
+        fecha_fin: proyecto.fecha_fin || null,
+        fecha_entrega: proyecto.fecha_entrega || null,
+        notas: proyecto.notas ? String(proyecto.notas).trim() : null,
+        estado: Number(proyecto.estado) || 1,
+        tipificacion: proyecto.tipificacion || "Pendiente",
         detalles: detallesFormateados,
-        // No enviar total_estimado, el backend lo calcula
       };
+      
+      // Si hay nueva nota en edición, agregarla al payload
+      if (id && proyecto.nueva_nota && proyecto.nueva_nota.trim()) {
+        payload.nueva_nota = proyecto.nueva_nota.trim();
+        // Si hay archivos seleccionados, se asociarán a la nueva nota en el backend
+        // Los archivos se envían por separado en FormData
+      }
+      
+      // Validar que el nombre no esté vacío
+      if (!payload.nombre || payload.nombre.length === 0) {
+        alert("El nombre del proyecto es obligatorio");
+        return;
+      }
+      
+      // Validar que haya al menos un detalle
+      if (!payload.detalles || payload.detalles.length === 0) {
+        alert("Debe seleccionar al menos una pieza con tratamiento");
+        return;
+      }
+      
+      console.log("Payload a enviar:", JSON.stringify(payload, null, 2));
 
       let respuesta;
 
       if (id) {
-        respuesta = await updateProyecto(id, payload);
+        // Al editar, enviar archivos junto con la actualización si hay
+        console.log("📝 Editando proyecto. Archivos a enviar:", images.length);
+        console.log("📝 Payload:", JSON.stringify(payload, null, 2));
+        respuesta = await updateProyecto(id, payload, images);
       } else {
-        respuesta = await createProyecto(payload);
+        // Al crear, enviar archivos junto con la creación si hay
+        console.log("🚀 ProyectoForm - Llamando a createProyecto");
+        console.log("🚀 URL que se usará:", `/api/proyectos`);
+        console.log("🚀 Payload completo:", JSON.stringify(payload, null, 2));
+        console.log("🚀 Archivos:", images.length);
+        
+        try {
+          respuesta = await createProyecto(payload, images);
+          console.log("✅ createProyecto completado. Respuesta:", respuesta);
+        } catch (error) {
+          console.error("❌ Error en createProyecto:", error);
+          console.error("❌ Error status:", error.status);
+          console.error("❌ Error data:", error.data);
+          throw error;
+        }
       }
 
       const proyectoId =
@@ -398,18 +496,86 @@ if (isMounted) setEmpleados(listaEmpleados);
         respuesta?.proyectoID ||
         respuesta?.id ||
         respuesta?.data?.proyectoID;
+      
+      console.log("📋 ProyectoID extraído:", proyectoId);
 
-      if (images.length > 0 && proyectoId) {
-        const formData = new FormData();
-        images.forEach((file) => formData.append("images[]", file));
-        await uploadProyectoImages(proyectoId, formData);
+      // Si estamos creando, las imágenes se envían junto con la creación (ya se maneja en el backend)
+      // No necesitamos subirlas por separado porque ya se procesan en el store del backend
+
+      // Limpiar nueva_nota y recargar datos completos después de guardar
+      if (id) {
+        setProyecto(prev => ({ ...prev, nueva_nota: "" }));
+        setImages([]); // Limpiar imágenes seleccionadas
+        
+        // Recargar el proyecto completo para obtener historial e imágenes actualizados
+        try {
+          const respuesta = await getProyectoById(id);
+          const proyectoData = respuesta?.data || respuesta?.proyecto || respuesta || {};
+          
+          // Recargar historial
+          if (proyectoData.historial && Array.isArray(proyectoData.historial)) {
+            setHistorial(proyectoData.historial);
+            console.log("✅ Historial recargado:", proyectoData.historial.length, "mensajes");
+          } else {
+            setHistorial([]);
+          }
+          
+          // No necesitamos cargar imagenesExistentes por separado
+          // Los archivos ya están en el historial y se muestran ahí
+          setImagenesExistentes([]);
+        } catch (err) {
+          console.error("Error recargando datos después de actualizar:", err);
+        }
       }
-
+      
+      if (!id) {
+        // Si se creó un nuevo proyecto, recargar los datos para mostrar imágenes e historial
+        if (proyectoId) {
+          try {
+            const respuestaCompleta = await getProyectoById(proyectoId);
+            const proyectoDataCompleto = respuestaCompleta?.data || respuestaCompleta?.proyecto || respuestaCompleta || {};
+            
+            console.log("📋 ProyectoForm - Proyecto creado - Historial:", proyectoDataCompleto.historial?.length || 0);
+            console.log("📋 ProyectoForm - Proyecto creado - Imágenes:", proyectoDataCompleto.imagenes?.length || 0);
+            
+            if (proyectoDataCompleto.historial && Array.isArray(proyectoDataCompleto.historial)) {
+              setHistorial(proyectoDataCompleto.historial);
+            }
+            
+            // No necesitamos cargar imagenesExistentes por separado
+            // Los archivos ya están en el historial
+            setImagenesExistentes([]);
+          } catch (err) {
+            console.error("Error recargando proyecto después de crear:", err);
+          }
+        }
       alert("Proyecto guardado correctamente");
+      }
       navigate("/proyectos");
     } catch (error) {
       console.error("Error guardando:", error);
-      alert(error.message || "Error al guardar proyecto");
+      console.error("Error completo:", error.data || error);
+      console.error("Error status:", error.status);
+      
+      let errorMessage = "Error al guardar proyecto";
+      const validationErrors = error.data?.errors;
+      
+      if (validationErrors) {
+        const errorList = Object.entries(validationErrors)
+          .map(([field, messages]) => {
+            const msg = Array.isArray(messages) ? messages.join(', ') : messages;
+            return `${field}: ${msg}`;
+          })
+          .join('\n');
+        errorMessage = `Error de validación:\n${errorList}`;
+      } else if (error.data?.message) {
+        errorMessage = error.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      // Mostrar mensaje más detallado
+      alert(`Error: ${errorMessage}\n\nPor favor, verifique:\n- Que todos los campos estén completos\n- Que los tratamientos existan en la base de datos\n- Que el cliente y diseñador sean válidos`);
     } finally {
       setGuardando(false);
     }
@@ -452,7 +618,7 @@ if (isMounted) setEmpleados(listaEmpleados);
           >
             <option value="">-- Tratamiento --</option>
             {tratamientosDisponibles.map((t) => (
-              <option key={t.id} value={t.id}>{t.nombre}</option>
+              <option key={`${pieza}-trat-${t.id}`} value={t.id}>{t.nombre}</option>
             ))}
           </select>
         </div>
@@ -480,7 +646,7 @@ if (isMounted) setEmpleados(listaEmpleados);
           >
             <option value="">-- Tratamiento --</option>
             {tratamientosDisponibles.map((t) => (
-              <option key={t.id} value={t.id}>{t.nombre}</option>
+              <option key={`${pieza}-trat-${t.id}`} value={t.id}>{t.nombre}</option>
             ))}
           </select>
         </div>
@@ -489,9 +655,6 @@ if (isMounted) setEmpleados(listaEmpleados);
   </div>
 </div>
 </div>
-
-
-
 
         {/* FORMULARIO GENERAL */}
         <form className="proyecto-form" onSubmit={handleSubmit}>
@@ -554,11 +717,26 @@ if (isMounted) setEmpleados(listaEmpleados);
   >
     <option value="">-- Seleccionar diseñador --</option>
 
-    {(Array.isArray(empleados) ? empleados : []).map((e, index) => (
-      <option key={`emp-${index}`} value={getEmpleadoId(e) || ""}>
+    {(Array.isArray(empleados) ? empleados : [])
+      .filter(e => {
+        const empId = getEmpleadoId(e);
+        return empId !== null && empId !== undefined && empId !== "";
+      })
+      // Eliminar duplicados por empleadoID (mantener el primero)
+      .filter((e, index, self) => {
+        const empId = getEmpleadoId(e);
+        return self.findIndex(emp => getEmpleadoId(emp) === empId) === index;
+      })
+      .map((e, index) => {
+        const empId = getEmpleadoId(e);
+        const userId = e.id || e.userID || `user-${index}`;
+        // Usar combinación de userId y empId para hacer la key única
+        return (
+          <option key={`emp-${userId}-${empId}-${index}`} value={empId}>
         {getEmpleadoNombre(e)}
       </option>
-    ))}
+        );
+      })}
 
   </select>
 </label>
@@ -598,55 +776,176 @@ if (isMounted) setEmpleados(listaEmpleados);
             />
           </label>
 
+          {id && (
           <label>
-            Notas u observaciones:
+              Tipificación:
+              <select
+                name="tipificacion"
+                value={proyecto.tipificacion || "Pendiente"}
+                onChange={handleChange}
+              >
+                {getTipificacionesEditables(user?.rolID).map((tip) => (
+                  <option key={tip.nombre} value={tip.nombre}>
+                    {tip.nombre}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+
+          {id ? (
+            <>
+              {/* Mostrar historial de notas y archivos */}
+              <div className="chat-notas">
+                <h3>Historial de Notas y Comentarios</h3>
+                <div className="chat-mensajes">
+                  {historial.length > 0 ? (
+                    historial.map((item, index) => {
+                      const fecha = item.created_at 
+                        ? new Date(item.created_at).toLocaleString('es-ES', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })
+                        : 'Sin fecha';
+                      
+                      let archivos = [];
+                      try {
+                        if (item.archivos) {
+                          if (Array.isArray(item.archivos)) {
+                            archivos = item.archivos;
+                          } else if (typeof item.archivos === 'string') {
+                            try {
+                              archivos = JSON.parse(item.archivos);
+                            } catch (parseError) {
+                              // Si no es JSON válido, intentar como string simple
+                              archivos = [item.archivos];
+                            }
+                          } else if (typeof item.archivos === 'object') {
+                            archivos = [item.archivos];
+                          }
+                        }
+                      } catch (e) {
+                        console.warn("Error parseando archivos:", e, item.archivos);
+                        archivos = [];
+                      }
+                      
+                      return (
+                        <div key={item.id || index} className="mensaje-chat">
+                          <div className="mensaje-header">
+                            <strong>{item.usuario_nombre || 'Usuario'}</strong>
+                            <span className="mensaje-fecha">{fecha}</span>
+                          </div>
+                          {item.nota && (
+                            <div className="mensaje-texto">{item.nota}</div>
+                          )}
+                          {archivos && archivos.length > 0 && (
+                            <div className="mensaje-archivos-lista">
+                              {archivos.map((archivo, idx) => {
+                                if (!archivo) return null;
+                                
+                                // Manejar diferentes formatos de archivo
+                                let archivoRuta = '';
+                                let nombreArchivo = '';
+                                
+                                if (typeof archivo === 'string') {
+                                  archivoRuta = archivo;
+                                  nombreArchivo = archivo.split("/").pop() || archivo.split("\\").pop() || `archivo-${idx + 1}`;
+                                } else if (archivo && typeof archivo === 'object') {
+                                  archivoRuta = archivo.ruta || archivo.url || archivo.path || archivo.name || '';
+                                  nombreArchivo = archivo.nombre || archivo.name || archivoRuta.split("/").pop() || archivoRuta.split("\\").pop() || `archivo-${idx + 1}`;
+                                }
+                                
+                                if (!archivoRuta) return null;
+                                
+                                const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+                                const archivoUrl = archivoRuta.startsWith('http') 
+                                  ? archivoRuta 
+                                  : archivoRuta.startsWith('/storage/')
+                                  ? `${API_BASE_URL}${archivoRuta}`
+                                  : `${API_BASE_URL}/storage/${archivoRuta.replace(/^\//, '')}`;
+                                const esImagen = /\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(nombreArchivo);
+                                const esSTL = /\.(stl)$/i.test(nombreArchivo);
+                                
+                                return (
+                                  <div key={idx} className="archivo-fila">
+                                    <span className="archivo-icono">
+                                      {esImagen ? '🖼️' : esSTL ? '📦' : '📎'}
+                                    </span>
+                                    <a
+                                      href={archivoUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      download={nombreArchivo}
+                                      className="archivo-enlace"
+                                    >
+                                      {nombreArchivo}
+                                    </a>
+                                    {esImagen && (
+                                      <img
+                                        src={archivoUrl}
+                                        alt={nombreArchivo}
+                                        className="archivo-preview"
+                                        onClick={() => window.open(archivoUrl, '_blank')}
+                                        onError={(e) => e.target.style.display = 'none'}
+                                      />
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="sin-mensajes">No hay notas o comentarios aún</div>
+                  )}
+                </div>
+              </div>
+
+              <div className="chat-notas-edicion">
+                <h3>Agregar Nota o Comentario</h3>
+                <label>
+                  Nueva nota:
+                  <textarea
+                    name="nueva_nota"
+                    value={proyecto.nueva_nota || ""}
+                    onChange={handleChange}
+                    placeholder="Escribe tu comentario aquí..."
+                  ></textarea>
+                </label>
+                <small>Esta nota se agregará al historial del proyecto con tu nombre</small>
+              </div>
+            </>
+          ) : (
+            <label>
+              Notas iniciales:
             <textarea
               name="notas"
               value={proyecto.notas || ""}
               onChange={handleChange}
+                placeholder="Notas iniciales del proyecto..."
             ></textarea>
           </label>
+          )}
 
           <label>
-            Adjuntar imágenes:
-            <input type="file" multiple onChange={handleImages} accept="image/*" />
+            Adjuntar archivos (imágenes, STL, documentos, etc.):
+            <input type="file" multiple onChange={handleImages} />
             {images.length > 0 && (
               <div className="imagenes-nuevas">
-                <p>Nuevas imágenes seleccionadas: {images.length}</p>
+                <p>Archivos seleccionados: {images.length}</p>
+                <ul style={{ fontSize: '12px', color: '#666', marginTop: '5px', paddingLeft: '20px' }}>
+                  {images.map((file, idx) => (
+                    <li key={idx}>{file.name} ({(file.size / 1024).toFixed(2)} KB)</li>
+                  ))}
+                </ul>
               </div>
             )}
           </label>
-
-          {/* Mostrar imágenes existentes en modo edición */}
-          {id && imagenesExistentes.length > 0 && (
-            <div className="imagenes-existentes">
-              <label>Imágenes actuales:</label>
-              <div className="imagenes-grid-mini">
-                {imagenesExistentes.map((ruta, index) => {
-                  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
-                  const imageUrl = ruta.startsWith("http")
-                    ? ruta
-                    : ruta.startsWith("/")
-                    ? `${API_BASE_URL}${ruta}`
-                    : `${API_BASE_URL}/storage/${ruta}`;
-                  const nombreArchivo = ruta.split("/").pop() || `imagen-${index + 1}`;
-                  return (
-                    <div key={index} className="imagen-existente-item">
-                      <span className="imagen-nombre">{nombreArchivo}</span>
-                      <a
-                        href={imageUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-ver-mini"
-                      >
-                        Ver
-                      </a>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
           <button type="submit" className="btn-submit" disabled={guardando}>
             {guardando ? "Guardando..." : id ? "Actualizar Proyecto" : "Crear Proyecto"}

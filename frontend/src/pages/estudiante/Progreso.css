@@ -1,0 +1,317 @@
+/* Estilos para Progreso - Consistente con Dashboard */
+.estudiante-progreso {
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100%;
+  width: 100%;
+}
+
+.progreso-header {
+  margin-bottom: 32px;
+}
+
+.progreso-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  transition: color 0.3s ease;
+}
+
+.progreso-header p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.progreso-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.progreso-stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.progreso-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  background-color: var(--card-hover);
+}
+
+.progreso-stat-card .stat-icon {
+  font-size: 32px;
+  color: var(--accent-color);
+  transition: color 0.3s ease;
+}
+
+.progreso-stat-card h3 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+  transition: color 0.3s ease;
+}
+
+.progreso-stat-card p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.progreso-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.progreso-section h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 24px 0;
+  transition: color 0.3s ease;
+}
+
+.certificados-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.certificado-card {
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.certificado-card:hover {
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  background-color: var(--card-hover);
+}
+
+.certificado-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 28px;
+  color: white;
+}
+
+.certificado-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  transition: color 0.3s ease;
+}
+
+.certificado-nivel {
+  font-size: 14px;
+  color: var(--accent-color);
+  font-weight: 500;
+  margin: 0 0 8px 0;
+  transition: color 0.3s ease;
+}
+
+.certificado-fecha {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0 0 16px 0;
+  transition: color 0.3s ease;
+}
+
+.descargar-certificado-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #117b9b 0%, #0e6a85 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.descargar-certificado-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.cursos-progreso-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.curso-progreso-item {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.curso-progreso-item:hover {
+  border-color: var(--accent-color);
+  box-shadow: var(--shadow-sm);
+  background-color: var(--card-hover);
+}
+
+.curso-progreso-info {
+  flex: 1;
+}
+
+.curso-progreso-info h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  transition: color 0.3s ease;
+}
+
+.curso-nivel {
+  font-size: 14px;
+  color: var(--accent-color);
+  font-weight: 500;
+  margin: 0 0 12px 0;
+  transition: color 0.3s ease;
+}
+
+.progreso-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progreso-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
+
+.progreso-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #117b9b 0%, #0e6a85 100%);
+  transition: width 0.3s ease;
+}
+
+.progreso-fill.completado {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.progreso-porcentaje {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 50px;
+  text-align: right;
+  transition: color 0.3s ease;
+}
+
+.certificado-btn-small {
+  background: linear-gradient(135deg, #117b9b 0%, #0e6a85 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.certificado-btn-small:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 64px 32px;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.empty-state svg {
+  margin-bottom: 16px;
+  opacity: 0.5;
+  color: var(--text-tertiary);
+  transition: color 0.3s ease;
+}
+
+.empty-state p {
+  font-size: 16px;
+  margin: 0;
+}
+
+.progreso-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  font-size: 18px;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .estudiante-progreso {
+    padding: 20px;
+  }
+
+  .progreso-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .certificados-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .curso-progreso-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}

@@ -1,0 +1,25 @@
+# Entornos
+.env
+.env.*
+backend/.env
+backend/.env.*
+frontend/.env
+frontend/.env.*
+
+# Archivos sensibles
+contraseñas.txt
+
+# Dependencias
+node_modules/
+vendor/
+
+# Builds
+frontend/dist/
+frontend/build/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/

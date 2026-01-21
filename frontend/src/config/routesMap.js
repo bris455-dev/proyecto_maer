@@ -39,5 +39,36 @@ export const routesMap = {
       { nombre: "Restablecer Contraseña", rutaFrontend: "/seguridad/restablecer", rutaBackend: "/change-password" },
       { nombre: "Baja de Usuarios", rutaFrontend: "/seguridad/baja-usuarios", rutaBackend: "/usuarios/{id}/deactivate" }
     ]
+  },
+  Facturación: {
+    rutaFrontend: "/facturacion",
+    submenus: [
+      { nombre: "Gestionar", rutaFrontend: "/facturacion", rutaBackend: "/facturacion" }
+    ]
+  },
+  Cursos: {
+    rutaFrontend: "/cursos/dashboard",
+    submenus: [
+      { nombre: "Dashboard de Cursos", rutaFrontend: "/cursos/dashboard", rutaBackend: "/cursos/dashboard/kpis" },
+      { nombre: "Básico", rutaFrontend: "/cursos/basico", rutaBackend: "/cursos?nivel_id=1" },
+      { nombre: "Intermedio", rutaFrontend: "/cursos/intermedio", rutaBackend: "/cursos?nivel_id=2" },
+      { nombre: "Avanzado", rutaFrontend: "/cursos/avanzado", rutaBackend: "/cursos?nivel_id=3" },
+      { nombre: "Reportes de Contenido", rutaFrontend: "/cursos/reportes", rutaBackend: "/cursos/reportes" },
+      { nombre: "Gestión de Metadatos", rutaFrontend: "/cursos/metadatos", rutaBackend: "/cursos/metadata" }
+    ]
+  },
+  Inventario: {
+    rutaFrontend: "/inventario",
+    submenus: [
+      { nombre: "Listado de Productos", rutaFrontend: "/inventario", rutaBackend: "/inventario" },
+      { nombre: "Nuevo Producto", rutaFrontend: "/inventario/crear", rutaBackend: "/inventario" }
+    ]
+  },
+  Producción: {
+    rutaFrontend: "/produccion",
+    submenus: [
+      { nombre: "Listado de Entregas", rutaFrontend: "/produccion", rutaBackend: "/produccion" },
+      { nombre: "Nueva Entrega", rutaFrontend: "/produccion/crear", rutaBackend: "/produccion" }
+    ]
   }
 };

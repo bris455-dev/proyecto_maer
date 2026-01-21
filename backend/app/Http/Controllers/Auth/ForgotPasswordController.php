@@ -42,7 +42,7 @@ class ForgotPasswordController extends Controller
 
         // ✅ Registrar en bitácora
         Bitacora::create([
-            'usuario_id' => $user->id,
+            'user_id' => $user->id,
             'accion' => 'Solicitud de recuperación de contraseña',
             'descripcion' => 'Se envió un código de recuperación al correo del usuario.',
             'ip' => request()->ip(),

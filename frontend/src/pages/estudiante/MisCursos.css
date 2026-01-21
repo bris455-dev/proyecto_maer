@@ -1,0 +1,297 @@
+/* Estilos para Mis Cursos - Consistente con Dashboard */
+.estudiante-mis-cursos-container {
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100%;
+  width: 100%;
+}
+
+/* Header consistente con Dashboard */
+.mis-cursos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.mis-cursos-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  transition: color 0.3s ease;
+}
+
+.mis-cursos-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+/* Estadísticas - Mismo estilo que Dashboard */
+.mis-cursos-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  background-color: var(--card-hover);
+}
+
+.stat-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+}
+
+.stat-icon.cursos-total {
+  background: linear-gradient(135deg, #117b9b 0%, #0e6a85 100%);
+}
+
+.stat-icon.cursos-progreso {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.stat-icon.cursos-completados {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.stat-content h3 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+  transition: color 0.3s ease;
+}
+
+.stat-content p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+/* Sección de cursos */
+.mis-cursos-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.mis-cursos-section h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 24px 0;
+  transition: color 0.3s ease;
+}
+
+/* Grid de cursos - Mismo estilo que Dashboard */
+.mis-cursos-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.curso-card-estudiante {
+  background: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
+  border: 1px solid var(--border-color);
+}
+
+.curso-card-estudiante:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  background-color: var(--card-hover);
+}
+
+.curso-card-imagen {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  background: var(--bg-tertiary);
+  transition: background-color 0.3s ease;
+}
+
+.curso-card-imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.curso-card-content {
+  padding: 20px;
+}
+
+.curso-card-content h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  transition: color 0.3s ease;
+}
+
+.curso-card-nivel {
+  font-size: 14px;
+  color: var(--accent-color);
+  font-weight: 500;
+  margin: 0 0 8px 0;
+  transition: color 0.3s ease;
+}
+
+.curso-card-descripcion {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+  transition: color 0.3s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.curso-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.curso-card-meta svg {
+  color: var(--accent-color);
+}
+
+/* Barra de progreso - Mismo estilo que Dashboard */
+.curso-card-progress {
+  margin-bottom: 16px;
+}
+
+.progress-bar-background {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #117b9b 0%, #0e6a85 100%);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+/* Botón continuar - Mismo estilo que Dashboard */
+.btn-continuar-curso {
+  width: 100%;
+  background: linear-gradient(135deg, #117b9b 0%, #0e6a85 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-continuar-curso:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+/* Estado vacío - Mismo estilo que Dashboard */
+.no-cursos-message {
+  text-align: center;
+  padding: 64px 32px;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+  font-size: 16px;
+}
+
+.no-cursos-message a {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.no-cursos-message a:hover {
+  text-decoration: underline;
+}
+
+.estudiante-mis-cursos-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  font-size: 18px;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .estudiante-mis-cursos-container {
+    padding: 20px;
+  }
+
+  .mis-cursos-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mis-cursos-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .mis-cursos-list {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,276 @@
+/* Layout específico para estudiantes */
+.student-layout-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-primary);
+  transition: background-color 0.3s ease;
+}
+
+/* Botón de toggle para móviles */
+.student-toggle-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1001;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  display: none;
+  transition: all 0.3s ease;
+}
+
+.dark-theme .student-toggle-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+}
+
+.student-toggle-btn:hover {
+  background: #0e6a85;
+  transform: scale(1.05);
+}
+
+/* Sidebar del estudiante */
+.student-sidebar {
+  width: 280px;
+  background: var(--sidebar-gradient);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  transition: transform 0.3s ease, background 0.3s ease;
+  overflow-y: auto;
+}
+
+/* Sidebar en tema oscuro */
+.dark-theme .student-sidebar {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border-right: 1px solid var(--border-color);
+}
+
+.student-sidebar.cerrado {
+  transform: translateX(-100%);
+}
+
+.student-sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.student-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.student-logo h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: white;
+}
+
+.student-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.student-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  flex-shrink: 0;
+}
+
+.student-user-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.student-user-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.student-user-role {
+  font-size: 12px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* Navegación */
+.student-nav {
+  flex: 1;
+  padding: 20px 0;
+  overflow-y: auto;
+}
+
+.student-menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.student-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  border-left: 3px solid transparent;
+}
+
+.student-menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-left-color: rgba(255, 255, 255, 0.5);
+}
+
+.student-menu-item.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border-left-color: white;
+  font-weight: 600;
+}
+
+.student-menu-item svg {
+  flex-shrink: 0;
+}
+
+/* Footer del sidebar */
+.student-sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.student-logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.student-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+/* Contenido principal */
+.student-main-content {
+  flex: 1;
+  margin-left: 280px;
+  transition: margin-left 0.3s ease, background-color 0.3s ease;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100vh;
+  position: relative;
+}
+
+.student-main-content.menu-cerrado {
+  margin-left: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .student-toggle-btn {
+    display: block;
+  }
+
+  .student-sidebar {
+    transform: translateX(-100%);
+  }
+
+  .student-sidebar.abierto {
+    transform: translateX(0);
+  }
+
+  .student-main-content {
+    margin-left: 0;
+  }
+
+  .student-sidebar {
+    width: 260px;
+  }
+}
+
+/* Scrollbar personalizado para el sidebar */
+.student-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.student-sidebar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.student-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.student-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Scrollbar personalizado para el contenido principal */
+.student-main-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.student-main-content::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+.student-main-content::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.student-main-content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+

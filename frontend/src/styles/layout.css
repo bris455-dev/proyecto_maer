@@ -28,41 +28,73 @@
 
 /* Menú lateral */
 .menu-lateral {
-  width: 220px;
+  width: 280px;
   background-color: #13768f;
   color: white;
-  padding: 60px 20px 20px;
+  padding: 20px 15px 70px;
   transition: width 0.3s ease, transform 0.3s ease;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* empuja logout abajo */
-  height: 100%;
+  justify-content: space-between;
+  height: 100vh;
   z-index: 1000;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .menu-lateral.cerrado {
   width: 0;
-  padding: 60px 0;
+  padding: 20px 0;
   transform: translateX(-100%);
+}
+
+.menu-superior {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  padding-bottom: 10px; /* Espacio reducido para el botón de logout */
+  /* Ocultar scrollbar pero mantener funcionalidad */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE y Edge */
+}
+
+.menu-superior::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .menu-lateral h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  margin-top: 0;
+  flex-shrink: 0;
+  font-size: 1.3rem;
 }
 
 .menu-lateral ul {
   list-style: none;
   padding: 0;
+  overflow-y: auto;
+  flex: 1;
+  /* Ocultar scrollbar pero mantener funcionalidad */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE y Edge */
+}
+
+.menu-lateral ul::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .menu-lateral li {
-  padding: 10px;
-  margin: 5px 0;
+  padding: 8px 12px;
+  margin: 3px 0;
   cursor: pointer;
   border-radius: 6px;
   transition: background 0.3s;
+  font-size: 0.95rem;
 }
 
 .menu-lateral li:hover {
@@ -79,6 +111,9 @@
   text-align: center;
   margin-left: 0px;
   transition: margin-left 0.3s ease;
+  overflow-y: auto;
+  height: 100vh;
+  box-sizing: border-box;
 }
 
 /* Submenu */
@@ -89,52 +124,79 @@
 }
 
 .submenu li {
-  padding: 6px 0 6px 10px;
-  font-size: 0.9rem;
+  padding: 5px 0 5px 10px;
+  font-size: 0.88rem;
   cursor: pointer;
   color: #e2e8f0;
+  margin: 2px 0;
 }
 
 .submenu li:hover {
   text-decoration: underline;
 }
 
-/* Nombre de usuario en el menú lateral */
-.user-name {
+/* Información del usuario en el menú lateral */
+.user-info {
   background-color: #3c9aba;
   color: white;
-  padding: 10px 15px;
+  padding: 8px 12px;
   border-radius: 12px;
-  margin: 15px 0;
+  margin: 8px 0;
   text-align: center;
-  font-weight: 600;
-  font-size: 1rem;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   transition: transform 0.2s, background-color 0.2s;
 }
 
-.user-name:hover {
+.user-info:hover {
   background-color: #468ca0;
-  transform: scale(1.05);
+  transform: translateY(-2px);
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0 0 5px 0;
+}
+
+.user-role {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin: 0;
+  font-weight: 500;
 }
 
 /* Botón de logout (parte inferior) */
 .menu-inferior {
-  position: absolute;
-  bottom: 40px;
-  width: 1%;
+  flex-shrink: 0;
+  padding: 12px 15px;
   text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background-color: #13768f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
 }
 
 .btn-logout {
   background-color: #c0392b;
   color: white;
-  padding: 15px 46px;
+  padding: 12px 24px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
   transition: background 0.3s;
+  width: 100%;
+  max-width: 180px;
+  display: block;
+  margin: 0 auto;
 }
 
 .btn-logout:hover {

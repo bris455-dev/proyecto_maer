@@ -124,31 +124,86 @@ tbody td {
 
 /* Botones */
 .acciones {
-  display: grid;
-  grid-template-columns: repeat(2, auto);
-  gap: 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .acciones button {
-  padding: 6px 14px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 1rem;
+  border-radius: 6px;
   border: none;
   cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
 }
 
-.btn-editar { background: linear-gradient(135deg, #3498db, #2980b9); color: #fff; }
-.btn-editar:hover { transform: translateY(-2px) scale(1.05); background: linear-gradient(135deg, #2980b9, #1c5980); }
+.btn-editar { 
+  background: linear-gradient(135deg, #3498db, #2980b9); 
+  color: #fff; 
+}
+.btn-editar:hover { 
+  transform: translateY(-2px); 
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
 
-.btn-activar { background: linear-gradient(135deg, #117b9b, #0e5f73); color: #fff; }
-.btn-activar:hover { transform: translateY(-2px) scale(1.05); }
+.btn-activar { 
+  background: linear-gradient(135deg, #27ae60, #229954); 
+  color: #fff; 
+}
+.btn-activar:hover { 
+  transform: translateY(-2px); 
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
 
-.btn-desactivar { background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff; }
-.btn-desactivar:hover { transform: translateY(-2px) scale(1.05); }
+.btn-desactivar { 
+  background: linear-gradient(135deg, #e74c3c, #c0392b); 
+  color: #fff; 
+}
+.btn-desactivar:hover { 
+  transform: translateY(-2px); 
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.btn-eliminar {
+  background: linear-gradient(135deg, #c0392b, #a93226);
+  color: #fff;
+}
+.btn-eliminar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(192, 57, 43, 0.3);
+}
+
+/* Badge de estado */
+.estado-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.estado-badge.activo {
+  background-color: #27ae60;
+  color: #fff;
+}
+
+.estado-badge.inactivo {
+  background-color: #e74c3c;
+  color: #fff;
+}
 
 /* Paginación centrada */
 .paginacion {

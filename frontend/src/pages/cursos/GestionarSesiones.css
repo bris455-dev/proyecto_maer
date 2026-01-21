@@ -1,0 +1,256 @@
+.gestionar-sesiones-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sesiones-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #eee;
+}
+
+.sesiones-header h1 {
+  color: #0a7a95;
+  margin: 0 0 8px 0;
+}
+
+.curso-nivel {
+  display: inline-block;
+  background: #0e99bb;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.btn-volver {
+  background: #666;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-volver:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.sesiones-content {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sesiones-header-lista {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sesiones-header-lista h2 {
+  color: #333;
+  margin: 0;
+}
+
+.btn-nueva-sesion {
+  background: linear-gradient(135deg, #0a7a95 0%, #0e99bb 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-nueva-sesion:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(10, 122, 149, 0.3);
+}
+
+.form-nueva-sesion {
+  background: #f5f5f5;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.form-nueva-sesion input,
+.form-nueva-sesion textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 12px;
+  font-family: inherit;
+}
+
+.form-nueva-sesion input:focus,
+.form-nueva-sesion textarea:focus {
+  outline: none;
+  border-color: #0a7a95;
+}
+
+.form-actions-sesion {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-guardar-sesion {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-cancelar-sesion {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.sesion-item {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.sesion-header-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.sesion-header-item h3 {
+  color: #333;
+  margin: 0;
+  font-size: 16px;
+}
+
+.btn-subir-archivo {
+  background: #2196f3;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-subir-archivo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.sesion-descripcion {
+  color: #666;
+  font-size: 14px;
+  margin: 8px 0 12px 0;
+}
+
+.archivos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.archivo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.archivo-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.archivo-info svg {
+  color: #0a7a95;
+  font-size: 18px;
+}
+
+.archivo-nombre {
+  flex: 1;
+  color: #333;
+  font-size: 14px;
+}
+
+.archivo-tamaño {
+  color: #999;
+  font-size: 12px;
+}
+
+.btn-eliminar-archivo {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.btn-eliminar-archivo:hover {
+  transform: scale(1.1);
+}
+
+.sin-archivos,
+.sin-sesiones {
+  color: #999;
+  font-style: italic;
+  padding: 16px;
+  text-align: center;
+}
+
+.subiendo {
+  color: #2196f3;
+  font-size: 14px;
+  padding: 8px;
+  text-align: center;
+  font-style: italic;
+}
+
+.sesiones-loading,
+.sesiones-error {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+

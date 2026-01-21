@@ -1,0 +1,52 @@
+/**
+ * Estilos globales para contenedores principales del administrador
+ * Estos contenedores NO deben tener scroll vertical
+ * El scroll debe estar solo en el layout principal (contenido-principal) y en las tablas
+ * 
+ * NOTA: Estos estilos solo aplican dentro de .contenido-principal (Layout admin)
+ * NO afectan a .student-main-content (Layout estudiante)
+ */
+
+/* Asegurar que el contenido principal del admin tenga scroll */
+.contenido-principal {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  height: 100vh !important;
+}
+
+/* Contenedores principales del administrador - SIN scroll */
+.contenido-principal .clientes-container,
+.contenido-principal .proyectos-container,
+.contenido-principal .proyecto-form-container,
+.contenido-principal .proyecto-facturado-container,
+.contenido-principal .facturacion-container,
+.contenido-principal .factura-detalle-container,
+.contenido-principal .factura-grupal-container,
+.contenido-principal .listado-usuarios-container,
+.contenido-principal .crear-usuario-container,
+.contenido-principal .nuevo-rol-container,
+.contenido-principal .restablecer-contrasena-container,
+.contenido-principal .gestion-roles-container,
+.contenido-principal .baja-usuarios-container,
+.contenido-principal .reportes-container,
+.contenido-principal .dashboard-container,
+.contenido-principal .inicio-container,
+.contenido-principal .consultar-container {
+  overflow: visible !important;
+  max-height: none !important;
+  height: auto !important;
+}
+
+/* Contenedores de tablas - CON scroll si es necesario */
+.contenido-principal .table-wrapper,
+.contenido-principal .facturacion-table-container,
+.contenido-principal .usuarios-table-container,
+.contenido-principal .roles-table-container,
+.contenido-principal .baja-usuarios-table-container,
+.contenido-principal .tabla-container,
+.contenido-principal .tabla-facturacion-container {
+  /* Mantener scroll solo en tablas */
+  overflow-y: auto;
+  overflow-x: auto;
+}
+

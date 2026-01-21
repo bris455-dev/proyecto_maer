@@ -28,6 +28,12 @@ class User extends Authenticatable
         'lock_expires_at',
         'password_reset_token',
         'password_reset_expires_at',
+        // Preferencias del usuario
+        'idioma',
+        'tema',
+        'notificaciones_email',
+        'notificaciones_nuevos_cursos',
+        'notificaciones_recordatorios',
     ];
 
     protected $hidden = [
@@ -44,9 +50,22 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // 🔹 Relación con rol
+    // 🔹 Relación con rol (mantener para compatibilidad)
     public function rol()
     {
         return $this->belongsTo(Rol::class, 'rolID', 'rolID');
+    }
+
+    // 🔹 Relación con múltiples roles/perfiles
+    public function roles()
+    {
+        return $this->hasMany(UsuarioRol::class, 'usuarioID', 'id')
+            ->where('activo', true);
+    }
+
+    // 🔹 Obtener todos los roles activos del usuario
+    public function getRolesActivos()
+    {
+        return $this->roles()->with('rol')->get();
     }
 }
