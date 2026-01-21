@@ -2,9 +2,7 @@
 
 **Repositorio:** [https://github.com/bris455-dev/proyecto_maer](https://github.com/bris455-dev/proyecto_maer)  
 **Propietaria:** Brissette Eyzaguirre (`@bris455-dev`)  
-**Colaboradores:**  
-- Rudi  
-- Gerald  
+  
 
 ---
 
